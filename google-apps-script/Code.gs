@@ -96,7 +96,7 @@ function doPost(e) {
 
     switch (action) {
       case 'login':
-        result = handleLogin(payload.username, payload.password_hash);
+        result = handleLogin(payload.username, payload.password, payload.password_hash);
         break;
       case 'create_match':
         validateAuth(payload.token);
@@ -302,19 +302,55 @@ function handleGetSyncLogs() {
 /**
  * Handler Login Administrator
  */
-function handleLogin(username, passwordHash) {
+function handleLogin(username, password, passwordHash) {
   var users = getSheetRowsAsObjects('users');
+  var targetUser = String(username || '').trim().toLowerCase();
+  var targetHash = String(passwordHash || '').trim().toLowerCase();
+  var targetPass = String(password || '').trim();
+
+  // Hitung hash di backend Apps Script juga untuk keamanan dan redundansi
+  var backendHash = '';
+  if (targetPass) {
+    var rawBytes = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, targetPass, Utilities.Charset.UTF_8);
+    backendHash = rawBytes.map(function(b) {
+      var n = (b < 0 ? b + 256 : b).toString(16);
+      return n.length === 1 ? '0' + n : n;
+    }).join('').toLowerCase();
+  }
+
   for (var i = 0; i < users.length; i++) {
     var u = users[i];
-    if (u.username === username && u.password_hash === passwordHash) {
-      var token = 'GAS_TOKEN_' + Utilities.getUuid();
-      // Simpan token di ScriptCache agar dapat divalidasi oleh Web App (8 jam)
-      CacheService.getScriptCache().put(token, username, 3600 * 8);
-      return {
-        status: 'success',
-        token: token,
-        user: { id: u.id, username: u.username, role: u.role }
-      };
+    var sheetUser = String(u.username || '').trim().toLowerCase();
+    var sheetPass = String(u.password_hash || '').trim();
+
+    if (sheetUser === targetUser) {
+      // Bandingkan dengan hash dari frontend, hash dari backend, atau teks jika ditulis plaintext di sheet
+      var isMatch = (targetHash && sheetPass.toLowerCase() === targetHash) ||
+                    (backendHash && sheetPass.toLowerCase() === backendHash) ||
+                    (targetPass && sheetPass === targetPass);
+
+      if (isMatch) {
+        // Jika data di sheet masih plaintext, otomatis perbarui menjadi SHA-256 hash
+        if (sheetPass === targetPass && backendHash) {
+          try {
+            var ss = getSpreadsheet();
+            var sheet = ss.getSheetByName('users');
+            var headers = sheet.getDataRange().getValues()[0];
+            var passCol = headers.indexOf('password_hash');
+            if (passCol !== -1) {
+              sheet.getRange(i + 2, passCol + 1).setValue(backendHash);
+            }
+          } catch (e) {}
+        }
+
+        var token = 'GAS_TOKEN_' + Utilities.getUuid();
+        CacheService.getScriptCache().put(token, u.username, 3600 * 8);
+        return {
+          status: 'success',
+          token: token,
+          user: { id: u.id, username: u.username, role: u.role }
+        };
+      }
     }
   }
   return { status: 'error', message: 'Kombinasi username atau password salah.' };

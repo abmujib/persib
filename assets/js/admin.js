@@ -48,8 +48,8 @@ const AdminApp = (function() {
     const passwordInput = document.getElementById('adminPassword');
     const alertBox = document.getElementById('loginAlertBox');
 
-    const username = usernameInput.value.trim();
-    const password = passwordInput.value;
+    const username = usernameInput.value.trim().toLowerCase();
+    const password = passwordInput.value.trim();
 
     alertBox.classList.add('d-none');
 
