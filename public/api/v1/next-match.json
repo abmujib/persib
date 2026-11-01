@@ -1,0 +1,68 @@
+{
+  "status": "success",
+  "meta": {
+    "api_version": "1.0.0",
+    "club": "PERSIB Bandung",
+    "timezone": "Asia/Jakarta (WIB)",
+    "generated_at": "2026-11-01T19:07:59.330Z"
+  },
+  "data": {
+    "has_match": true,
+    "match": {
+      "id": "MATCH-20261101-49",
+      "external_match_id": "MANUAL-1793549986836",
+      "match_date": "2026-11-08",
+      "match_time": "19:00",
+      "timezone": "Asia/Jakarta (WIB)",
+      "datetime_wib": "2026-11-08T19:00:00+07:00",
+      "formatted_date": "Minggu, 8 November 2026",
+      "match_type": "AWAY",
+      "home_team": {
+        "id": "T-009",
+        "name": "JAVA UNITED FC",
+        "logo": "https://assets.ileague.id/uploads/images/club/lineup_JAVA_UNITED_FC_1786247746.png",
+        "created_at": "2026-11-01T14:45:07.851Z",
+        "updated_at": "2026-11-01T14:45:07.851Z"
+      },
+      "away_team": {
+        "id": "T-001",
+        "name": "PERSIB BANDUNG",
+        "logo": "https://assets.ileague.id/uploads/images/club/lineup_PERSIB_BANDUNG_1786248601.png",
+        "created_at": "2026-11-01T14:45:07.851Z",
+        "updated_at": "2026-11-02"
+      },
+      "opponent": {
+        "id": "T-009",
+        "name": "JAVA UNITED FC",
+        "logo": "https://assets.ileague.id/uploads/images/club/lineup_JAVA_UNITED_FC_1786247746.png",
+        "created_at": "2026-11-01T14:45:07.851Z",
+        "updated_at": "2026-11-01T14:45:07.851Z"
+      },
+      "competition": {
+        "id": "COMP-01",
+        "name": "BRI Super League",
+        "logo": "https://thumb.wikimedia.org/wikipedia/en/thumb/1/13/BRI_Super_League_2026.svg/500px-BRI_Super_League_2026.svg.png",
+        "created_at": "2026-11-01T14:45:09.333Z",
+        "updated_at": "2026-11-02"
+      },
+      "stadium": {
+        "id": "STD-09",
+        "name": "Stadion Jatidiri",
+        "city": "Semarang",
+        "created_at": "2026-11-01T14:45:11.500Z",
+        "updated_at": "2026-11-01T14:45:11.500Z"
+      },
+      "broadcast": "Indosiar & Vidio",
+      "status": "SCHEDULED",
+      "status_label": "Terjadwal",
+      "days_until": 6,
+      "countdown": {
+        "days": 6,
+        "hours": 16,
+        "minutes": 52,
+        "seconds": 0,
+        "is_past": false
+      }
+    }
+  }
+}

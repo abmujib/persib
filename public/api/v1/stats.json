@@ -1,0 +1,49 @@
+{
+  "status": "success",
+  "meta": {
+    "api_version": "1.0.0",
+    "club": "PERSIB Bandung",
+    "timezone": "Asia/Jakarta (WIB)",
+    "generated_at": "2026-11-01T19:08:05.662Z"
+  },
+  "data": {
+    "club": "PERSIB Bandung",
+    "season": "2024/2025 & 2026/2027",
+    "summary": {
+      "played": 8,
+      "won": 5,
+      "drawn": 1,
+      "lost": 2,
+      "points": 16,
+      "win_rate_percent": 63,
+      "goals_for": 15,
+      "goals_against": 8,
+      "goal_difference": 7,
+      "clean_sheets": 2
+    },
+    "home_record": {
+      "played": 4,
+      "won": 3,
+      "drawn": 1,
+      "lost": 0,
+      "goals_for": 10,
+      "goals_against": 3
+    },
+    "away_record": {
+      "played": 4,
+      "won": 2,
+      "drawn": 0,
+      "lost": 2,
+      "goals_for": 5,
+      "goals_against": 5
+    },
+    "recent_form": [
+      "D",
+      "W",
+      "L",
+      "W",
+      "W"
+    ],
+    "form_display": "D-W-L-W-W"
+  }
+}
