@@ -16,7 +16,7 @@ const CONFIG = {
   // Google Apps Script Web App API URL
   // Replace this with your published Google Apps Script Web App URL
   // Example: 'https://script.google.com/macros/s/AKfycbx.../exec'
-  GAS_API_URL: '',
+  GAS_API_URL: 'https://script.google.com/macros/s/AKfycbzEROJjyEg-WLTGYzCFUx0X8S4TL_WuxAMzEyJkmOYNV2twJ_553EBRVHysoNVG9RcDMw/exec',
 
   // Storage Keys for Browser Cache and Session
   STORAGE_KEYS: {
