@@ -1,0 +1,96 @@
+{
+  "status": "success",
+  "meta": {
+    "api_version": "1.0.0",
+    "club": "PERSIB Bandung",
+    "timezone": "Asia/Jakarta (WIB)",
+    "generated_at": "2026-11-01T19:08:05.662Z",
+    "total": 12
+  },
+  "data": [
+    {
+      "id": "T-001",
+      "name": "PERSIB Bandung",
+      "code": "PERSIB",
+      "logo": "https://assets.ileague.id/uploads/images/club/lineup_PERSIB_BANDUNG_1786248601.png",
+      "is_persib": true
+    },
+    {
+      "id": "T-002",
+      "name": "Persija Jakarta",
+      "code": "PSJA",
+      "logo": "https://upload.wikimedia.org/wikipedia/id/thumb/5/53/Persija_Jakarta_logo.svg/200px-Persija_Jakarta_logo.svg.png",
+      "is_persib": false
+    },
+    {
+      "id": "T-003",
+      "name": "Arema FC",
+      "code": "AREMA",
+      "logo": "https://upload.wikimedia.org/wikipedia/id/thumb/4/44/Arema_FC_2017_logo.svg/200px-Arema_FC_2017_logo.svg.png",
+      "is_persib": false
+    },
+    {
+      "id": "T-004",
+      "name": "Persebaya Surabaya",
+      "code": "PBYA",
+      "logo": "https://upload.wikimedia.org/wikipedia/id/thumb/7/75/Persebaya_Logo.svg/200px-Persebaya_Logo.svg.png",
+      "is_persib": false
+    },
+    {
+      "id": "T-005",
+      "name": "Bali United",
+      "code": "BALI",
+      "logo": "https://upload.wikimedia.org/wikipedia/id/thumb/7/7b/Bali_United_logo.svg/200px-Bali_United_logo.svg.png",
+      "is_persib": false
+    },
+    {
+      "id": "T-006",
+      "name": "Borneo FC Samarinda",
+      "code": "BFC",
+      "logo": "https://upload.wikimedia.org/wikipedia/id/thumb/3/3d/Borneo_FC_logo.svg/200px-Borneo_FC_logo.svg.png",
+      "is_persib": false
+    },
+    {
+      "id": "T-007",
+      "name": "PSIS Semarang",
+      "code": "PSIS",
+      "logo": "https://upload.wikimedia.org/wikipedia/id/thumb/1/14/PSIS_Semarang_logo.svg/200px-PSIS_Semarang_logo.svg.png",
+      "is_persib": false
+    },
+    {
+      "id": "T-008",
+      "name": "Madura United",
+      "code": "MDR",
+      "logo": "https://upload.wikimedia.org/wikipedia/id/thumb/8/87/Madura_United_FC_logo.svg/200px-Madura_United_FC_logo.svg.png",
+      "is_persib": false
+    },
+    {
+      "id": "T-009",
+      "name": "Port FC (Thailand)",
+      "code": "PORT",
+      "logo": "https://upload.wikimedia.org/wikipedia/en/thumb/e/eb/Port_F.C._logo.svg/200px-Port_F.C._logo.svg.png",
+      "is_persib": false
+    },
+    {
+      "id": "T-010",
+      "name": "Zhejiang FC (China)",
+      "code": "ZHJ",
+      "logo": "https://upload.wikimedia.org/wikipedia/en/thumb/2/23/Zhejiang_Professional_F.C._logo.svg/200px-Zhejiang_Professional_F.C._logo.svg.png",
+      "is_persib": false
+    },
+    {
+      "id": "T-011",
+      "name": "Lion City Sailors (Singapura)",
+      "code": "LCS",
+      "logo": "https://upload.wikimedia.org/wikipedia/en/thumb/f/f6/Lion_City_Sailors_FC.svg/200px-Lion_City_Sailors_FC.svg.png",
+      "is_persib": false
+    },
+    {
+      "id": "T-012",
+      "name": "Persik Kediri",
+      "code": "PSIK",
+      "logo": "https://upload.wikimedia.org/wikipedia/id/thumb/5/52/Logo_Persik_Kediri_2022.svg/200px-Logo_Persik_Kediri_2022.svg.png",
+      "is_persib": false
+    }
+  ]
+}
