@@ -612,6 +612,17 @@ const AdminApp = (function() {
     bsToast.show();
   }
 
+  // Security helper: sanitize dynamic strings against XSS injection
+  function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
   return {
     init,
     openAddMatchModal,

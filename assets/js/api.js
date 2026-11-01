@@ -588,8 +588,8 @@ const ApiService = (function() {
     const db = getLocalDb();
     const user = db.users.find(u => u.username === username);
 
-    // Verify against hash or default password
-    if (user && (user.password_hash === inputHash || password === 'persib1933')) {
+    // Verify against SHA-256 hash only
+    if (user && user.password_hash === inputHash) {
       const token = 'LOCAL_AUTH_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
       const sessionUser = { id: user.id, username: user.username, role: user.role };
       sessionStorage.setItem(CONFIG.STORAGE_KEYS.AUTH_TOKEN, token);

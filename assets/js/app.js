@@ -19,7 +19,6 @@ const App = (function() {
 
   async function init() {
     setupEventListeners();
-    updateConnectionStatusBar();
     await loadInitialData();
   }
 
@@ -112,18 +111,6 @@ const App = (function() {
         }
         renderCalendar();
       });
-    }
-
-    // GAS Settings Modal Save
-    const saveGasUrlBtn = document.getElementById('saveGasUrlBtn');
-    if (saveGasUrlBtn) {
-      saveGasUrlBtn.addEventListener('click', handleSaveGasUrl);
-    }
-
-    // Test GAS Connection
-    const testGasBtn = document.getElementById('testGasBtn');
-    if (testGasBtn) {
-      testGasBtn.addEventListener('click', handleTestGasConnection);
     }
 
     // Print Button Trigger from Navbar or Toolbar
@@ -642,72 +629,15 @@ const App = (function() {
     modal.show();
   }
 
-  // Update Status Bar for Google Apps Script vs Local Storage
-  function updateConnectionStatusBar() {
-    const isConnected = !!CONFIG.GAS_API_URL;
-    const indicatorEl = document.getElementById('gasStatusIndicator');
-    const textEl = document.getElementById('gasStatusText');
-    const urlInput = document.getElementById('gasApiUrlInput');
-
-    if (indicatorEl && textEl) {
-      if (isConnected) {
-        indicatorEl.className = 'gas-indicator-dot dot-connected';
-        textEl.innerHTML = `Terhubung ke <strong>Google Apps Script Web App</strong> (<span class="font-monospace">${CONFIG.GAS_API_URL.substring(0, 35)}...</span>)`;
-      } else {
-        indicatorEl.className = 'gas-indicator-dot dot-local';
-        textEl.innerHTML = `Mode <strong>Database Lokal Google Sheets Simulator</strong>. Siap disambungkan ke URL Web App Anda.`;
-      }
-    }
-
-    if (urlInput) {
-      urlInput.value = CONFIG.GAS_API_URL || '';
-    }
-  }
-
-  function handleSaveGasUrl() {
-    const input = document.getElementById('gasApiUrlInput');
-    const newUrl = input ? input.value.trim() : '';
-    window.updateGasUrl(newUrl);
-    updateConnectionStatusBar();
-
-    const modalEl = document.getElementById('gasSettingsModal');
-    const modal = bootstrap.Modal.getInstance(modalEl);
-    if (modal) modal.hide();
-
-    showToast(newUrl ? 'URL Google Apps Script berhasil disimpan!' : 'URL Google Apps Script direset ke mode lokal.', 'success');
-    loadInitialData();
-  }
-
-  async function handleTestGasConnection() {
-    const input = document.getElementById('gasApiUrlInput');
-    const url = input ? input.value.trim() : '';
-    const testResult = document.getElementById('gasTestResult');
-
-    if (!url) {
-      testResult.className = 'alert alert-warning mt-2 mb-0 py-2 small';
-      testResult.textContent = 'Harap masukkan URL Google Apps Script Web App terlebih dahulu.';
-      testResult.classList.remove('d-none');
-      return;
-    }
-
-    testResult.className = 'alert alert-info mt-2 mb-0 py-2 small';
-    testResult.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Memeriksa koneksi ke Google Apps Script...';
-    testResult.classList.remove('d-none');
-
-    try {
-      const targetUrl = url + (url.includes('?') ? '&' : '?') + 'action=matches';
-      const res = await fetch(targetUrl);
-      if (res.ok) {
-        const json = await res.json();
-        testResult.className = 'alert alert-success mt-2 mb-0 py-2 small';
-        testResult.innerHTML = `<i class="bi bi-check-circle me-1"></i> <strong>Koneksi Berhasil!</strong> Backend Google Sheets merespons dengan ${json.data ? json.data.length : 0} data.`;
-      } else {
-        throw new Error(`Status ${res.status}: ${res.statusText}`);
-      }
-    } catch (e) {
-      testResult.className = 'alert alert-danger mt-2 mb-0 py-2 small';
-      testResult.innerHTML = `<i class="bi bi-exclamation-triangle me-1"></i> <strong>Gagal Terhubung:</strong> ${e.message}. Pastikan deployment diset 'Who has access: Anyone'.`;
-    }
+  // Security helper: sanitize dynamic strings against XSS injection
+  function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
   }
 
   function renderLoadingState(isLoading) {

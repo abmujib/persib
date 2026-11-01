@@ -308,8 +308,8 @@ function handleLogin(username, passwordHash) {
     var u = users[i];
     if (u.username === username && u.password_hash === passwordHash) {
       var token = 'GAS_TOKEN_' + Utilities.getUuid();
-      // Simpan token sementara di UserCache
-      CacheService.getUserCache().put(token, username, 3600 * 8); // 8 jam
+      // Simpan token di ScriptCache agar dapat divalidasi oleh Web App (8 jam)
+      CacheService.getScriptCache().put(token, username, 3600 * 8);
       return {
         status: 'success',
         token: token,
@@ -321,15 +321,15 @@ function handleLogin(username, passwordHash) {
 }
 
 /**
- * Validasi Token Administrator
+ * Validasi Token Administrator (Wajib untuk Operasi CRUD & Sync)
  */
 function validateAuth(token) {
-  if (!token) throw new Error('Akses ditolak: Token autentikasi tidak ditemukan.');
-  var username = CacheService.getUserCache().get(token);
-  // Izinkan jika token valid di cache atau token lokal dev
-  if (!username && token.indexOf('LOCAL_AUTH_') !== 0) {
-    throw new Error('Sesi autentikasi telah berakhir. Harap login kembali.');
+  if (!token) throw new Error('Akses ditolak: Token autentikasi tidak disertakan.');
+  var username = CacheService.getScriptCache().get(token);
+  if (!username) {
+    throw new Error('Akses ditolak: Token tidak valid atau sesi login telah berakhir.');
   }
+  return username;
 }
 
 /**

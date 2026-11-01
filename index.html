@@ -48,9 +48,6 @@
             <button class="nav-link-custom border-0 bg-transparent text-white" id="openPrintModalBtn">
               <i class="bi bi-printer"></i> Cetak Jadwal (A4/PDF)
             </button>
-            <button class="nav-link-custom border-0 bg-transparent text-white" data-bs-toggle="modal" data-bs-target="#gasSettingsModal">
-              <i class="bi bi-cloud-arrow-up"></i> API Sheets
-            </button>
           </nav>
 
           <!-- Zone 3: Primary Action (Admin Portal) -->
@@ -142,19 +139,6 @@
           </div>
         </div>
       </section>
-
-      <!-- Google Apps Script Connection Bar -->
-      <div class="gas-status-bar no-print shadow-sm">
-        <div class="d-flex align-items-center">
-          <span id="gasStatusIndicator" class="gas-indicator-dot dot-local"></span>
-          <span id="gasStatusText">Memeriksa status Google Apps Script...</span>
-        </div>
-        <div>
-          <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#gasSettingsModal">
-            <i class="bi bi-gear-fill me-1"></i> Konfigurasi API Sheets
-          </button>
-        </div>
-      </div>
 
       <!-- Controls & Filter Toolbar -->
       <div class="card border-0 shadow-sm p-3 mb-4">
@@ -272,7 +256,6 @@
               <li class="mb-2"><a href="#jadwal" class="text-white-50 text-decoration-none hover-white">Jadwal Pertandingan</a></li>
               <li class="mb-2"><a href="#statistik" class="text-white-50 text-decoration-none hover-white">Statistik Musim</a></li>
               <li class="mb-2"><a href="./admin.html" class="text-white-50 text-decoration-none hover-white">Portal Admin</a></li>
-              <li class="mb-2"><a href="#" data-bs-toggle="modal" data-bs-target="#gasSettingsModal" class="text-white-50 text-decoration-none hover-white">Setup Google Sheets</a></li>
             </ul>
           </div>
           <div class="col-6 col-lg-4">
@@ -362,53 +345,6 @@
             <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Batal</button>
             <button type="button" class="btn btn-sm btn-primary" id="executePrintBtn">
               <i class="bi bi-printer me-1"></i> Mulai Cetak / Simpan PDF
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- MODAL: Google Apps Script Web App Settings -->
-    <div class="modal fade modal-persib" id="gasSettingsModal" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title fs-6 fw-bold text-white">
-              <i class="bi bi-google me-2"></i>Konfigurasi Google Apps Script API
-            </h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body p-4">
-            <p class="small text-muted mb-3">
-              Masukkan URL Web App dari deployment Google Apps Script Anda untuk menghubungkan website ini langsung dengan database <strong>Google Sheets</strong>.
-            </p>
-            <div class="mb-3">
-              <label class="form-label fw-semibold small">URL Google Apps Script Web App (exec):</label>
-              <input type="url" class="form-control form-control-sm font-monospace" id="gasApiUrlInput" 
-                     placeholder="https://script.google.com/macros/s/AKfycbx.../exec" />
-              <div class="form-text small">
-                Kosongkan URL untuk beralih kembali ke mode <strong>Local Storage Database Simulator</strong>.
-              </div>
-            </div>
-            <button type="button" class="btn btn-sm btn-outline-primary w-100 mb-2" id="testGasBtn">
-              <i class="bi bi-reception-4 me-1"></i> Uji Koneksi Web App
-            </button>
-            <div id="gasTestResult" class="d-none"></div>
-
-            <div class="mt-3 p-3 bg-light rounded border small">
-              <strong class="d-block mb-1 text-primary"><i class="bi bi-question-circle me-1"></i>Langkah Mendapatkan URL:</strong>
-              <ol class="mb-0 ps-3">
-                <li>Buka script di folder <code>google-apps-script/Code.gs</code>.</li>
-                <li>Klik tombol <strong>Deploy > New Deployment</strong> di Apps Script.</li>
-                <li>Pilih <strong>Web App</strong>, atur <em>Execute as: Me</em> dan <em>Who has access: Anyone</em>.</li>
-                <li>Salin Web App URL dan tempelkan pada kolom di atas.</li>
-              </ol>
-            </div>
-          </div>
-          <div class="modal-footer bg-light py-2">
-            <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Tutup</button>
-            <button type="button" class="btn btn-sm btn-primary" id="saveGasUrlBtn">
-              <i class="bi bi-check-lg me-1"></i> Simpan Konfigurasi
             </button>
           </div>
         </div>

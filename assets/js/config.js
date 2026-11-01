@@ -73,12 +73,6 @@ const CONFIG = {
     FINISHED: 'status-finished',
     POSTPONED: 'status-warning',
     CANCELLED: 'status-danger'
-  },
-
-  // Default credentials for offline test environment
-  DEFAULT_ADMIN: {
-    username: 'admin',
-    passwordHint: 'persib1933'
   }
 };
 
