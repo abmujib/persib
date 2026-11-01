@@ -1,0 +1,676 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Administrator Dashboard | PERSIB Bandung Match Schedule & Management</title>
+    <meta name="description" content="Panel administrasi pengelolaan jadwal, hasil pertandingan, tim lawan, dan sinkronisasi Football API PERSIB Bandung." />
+    
+    <!-- Favicon -->
+    <link rel="icon" href="https://upload.wikimedia.org/wikipedia/id/thumb/0/05/Logo_Persib_Bandung.svg/200px-Logo_Persib_Bandung.svg.png" />
+
+    <!-- Bootstrap 5 CSS & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="/assets/css/style.css" />
+  </head>
+  <body class="bg-light">
+
+    <!-- ==========================================
+         SECTION 1: ADMINISTRATOR LOGIN VIEW
+         ========================================== -->
+    <section id="adminLoginSection" class="min-vh-100 d-flex align-items-center justify-content-center p-3" style="background: linear-gradient(135deg, #001A4E 0%, #002B7F 100%);">
+      <div class="card border-0 shadow-lg p-4 p-md-5" style="max-width: 440px; width: 100%; border-radius: 16px;">
+        <div class="text-center mb-4">
+          <img src="https://upload.wikimedia.org/wikipedia/id/thumb/0/05/Logo_Persib_Bandung.svg/200px-Logo_Persib_Bandung.svg.png" 
+               alt="Logo PERSIB" style="height: 64px; width: auto;" class="mb-2" />
+          <h4 class="fw-extrabold text-primary mb-1">PORTAL ADMINISTRATOR</h4>
+          <p class="text-muted small">Kelola Jadwal & Database Pertandingan PERSIB Bandung</p>
+        </div>
+
+        <div id="loginAlertBox" class="alert alert-danger py-2 small d-none" role="alert"></div>
+
+        <form id="adminLoginForm">
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Username Administrator</label>
+            <div class="input-group">
+              <span class="input-group-text bg-white"><i class="bi bi-person text-muted"></i></span>
+              <input type="text" class="form-control" id="adminUsername" placeholder="admin" value="admin" required />
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Password</label>
+            <div class="input-group">
+              <span class="input-group-text bg-white"><i class="bi bi-key text-muted"></i></span>
+              <input type="password" class="form-control" id="adminPassword" placeholder="••••••••" value="persib1933" required />
+            </div>
+            <div class="form-text small mt-1 text-muted">
+              <i class="bi bi-shield-check text-success me-1"></i>Kredensial Default: <code>admin</code> / <code>persib1933</code>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary w-100 py-2 fw-bold mb-3 shadow-sm">
+            <i class="bi bi-box-arrow-in-right me-1"></i> Masuk ke Dashboard
+          </button>
+        </form>
+
+        <div class="text-center pt-3 border-top">
+          <a href="/" class="text-decoration-none text-muted small hover-primary">
+            <i class="bi bi-arrow-left me-1"></i> Kembali ke Website Jadwal Utama
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         SECTION 2: ADMIN DASHBOARD VIEW
+         ========================================== -->
+    <div id="adminDashboardSection" class="d-none">
+      <div class="container-fluid">
+        <div class="row">
+          <!-- Sidebar -->
+          <nav class="col-md-3 col-lg-2 d-md-block admin-sidebar collapse" id="sidebarMenu">
+            <div class="d-flex align-items-center gap-2 mb-4 pb-3 border-bottom border-white-50">
+              <img src="https://upload.wikimedia.org/wikipedia/id/thumb/0/05/Logo_Persib_Bandung.svg/200px-Logo_Persib_Bandung.svg.png" 
+                   alt="Logo PERSIB" style="height: 38px; width: auto;" />
+              <div>
+                <div class="fw-bold text-white small">PERSIB BANDUNG</div>
+                <div class="text-warning small" style="font-size: 0.65rem;">ADMIN CONSOLE</div>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <div class="text-white-50 small text-uppercase fw-bold mb-2 ps-2" style="font-size:0.65rem;">Navigasi Utama</div>
+              <a href="#" class="admin-nav-item admin-nav-link active" data-view="overview">
+                <i class="bi bi-speedometer2"></i> Ringkasan
+              </a>
+              <a href="#" class="admin-nav-item admin-nav-link" data-view="matches">
+                <i class="bi bi-calendar-check"></i> Jadwal & Skor
+              </a>
+              <a href="#" class="admin-nav-item admin-nav-link" data-view="teams">
+                <i class="bi bi-shield"></i> Tim Lawan & Logo
+              </a>
+              <a href="#" class="admin-nav-item admin-nav-link" data-view="stadiums">
+                <i class="bi bi-geo-alt"></i> Stadion
+              </a>
+              <a href="#" class="admin-nav-item admin-nav-link" data-view="competitions">
+                <i class="bi bi-trophy"></i> Kompetisi
+              </a>
+            </div>
+
+            <div class="mb-4">
+              <div class="text-white-50 small text-uppercase fw-bold mb-2 ps-2" style="font-size:0.65rem;">Integrasi & Database</div>
+              <a href="#" class="admin-nav-item admin-nav-link" data-view="sync">
+                <i class="bi bi-arrow-repeat"></i> Football API Sync
+              </a>
+              <a href="#" class="admin-nav-item admin-nav-link" data-view="logs">
+                <i class="bi bi-journal-text"></i> Log Riwayat Sync
+              </a>
+              <a href="#" class="admin-nav-item admin-nav-link" data-view="database">
+                <i class="bi bi-database"></i> Database Tools
+              </a>
+            </div>
+
+            <div class="mt-auto pt-4 border-top border-white-50">
+              <div class="small text-white-50 mb-2 ps-2">Login sebagai: <strong id="adminUserDisplay" class="text-white">admin</strong></div>
+              <a href="/" class="admin-nav-item text-white-50 mb-1">
+                <i class="bi bi-globe"></i> Website Publik
+              </a>
+              <button class="admin-nav-item text-danger border-0 bg-transparent w-100 text-start" id="adminLogoutBtn">
+                <i class="bi bi-box-arrow-left"></i> Logout Keluar
+              </button>
+            </div>
+          </nav>
+
+          <!-- Main Content Area -->
+          <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+            <!-- Header bar -->
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-2 pb-3 mb-4 border-bottom">
+              <div>
+                <h3 class="fw-bold text-dark mb-0">Manajemen Pertandingan PERSIB</h3>
+                <p class="text-muted small mb-0">Tersinkronisasi dengan Database Google Sheets & Google Apps Script Web App</p>
+              </div>
+              <div class="btn-toolbar mb-2 mb-md-0 gap-2">
+                <button type="button" class="btn btn-sm btn-primary shadow-sm" onclick="AdminApp.openAddMatchModal()">
+                  <i class="bi bi-plus-circle me-1"></i> Tambah Pertandingan Baru
+                </button>
+                <a href="/" target="_blank" class="btn btn-sm btn-outline-secondary">
+                  <i class="bi bi-box-arrow-up-right me-1"></i> Lihat Website Publik
+                </a>
+              </div>
+            </div>
+
+            <!-- TAB 1: OVERVIEW PANEL -->
+            <div class="admin-view-panel" id="panel_overview">
+              <div class="row g-3 mb-4">
+                <div class="col-12 col-sm-6 col-xl-auto flex-fill">
+                  <div class="admin-card border-start border-primary border-4 p-3">
+                    <div class="text-muted small fw-semibold text-uppercase">Total Pertandingan</div>
+                    <div class="fs-3 fw-bold text-dark tabular-nums" id="adminStatTotalMatches">0</div>
+                  </div>
+                </div>
+                <div class="col-12 col-sm-6 col-xl-auto flex-fill">
+                  <div class="admin-card border-start border-info border-4 p-3">
+                    <div class="text-muted small fw-semibold text-uppercase">Laga Mendatang</div>
+                    <div class="fs-3 fw-bold text-info tabular-nums" id="adminStatUpcoming">0</div>
+                  </div>
+                </div>
+                <div class="col-12 col-sm-6 col-xl-auto flex-fill">
+                  <div class="admin-card border-start border-success border-4 p-3">
+                    <div class="text-muted small fw-semibold text-uppercase">Laga Selesai</div>
+                    <div class="fs-3 fw-bold text-success tabular-nums" id="adminStatFinished">0</div>
+                  </div>
+                </div>
+                <div class="col-12 col-sm-6 col-xl-auto flex-fill">
+                  <div class="admin-card border-start border-warning border-4 p-3">
+                    <div class="text-muted small fw-semibold text-uppercase">Tim Terdaftar</div>
+                    <div class="fs-3 fw-bold text-dark tabular-nums" id="adminStatTeams">0</div>
+                  </div>
+                </div>
+                <div class="col-12 col-sm-6 col-xl-auto flex-fill">
+                  <div class="admin-card border-start border-secondary border-4 p-3">
+                    <div class="text-muted small fw-semibold text-uppercase">Riwayat Sync</div>
+                    <div class="fs-3 fw-bold text-secondary tabular-nums" id="adminStatSyncs">0</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Quick Action Banners -->
+              <div class="row g-3">
+                <div class="col-lg-8">
+                  <div class="card border-0 shadow-sm p-4 h-100">
+                    <h5 class="fw-bold mb-3"><i class="bi bi-clock-history me-2 text-primary"></i>Status Integrasi Google Sheets</h5>
+                    <p class="text-muted small">
+                      Aplikasi ini dirancang untuk bekerja seamless dengan Google Sheets sebagai database relational dan Google Apps Script sebagai backend REST API. Semua penambahan, pembaruan skor, dan sinkronisasi tersimpan permanen.
+                    </p>
+                    <div class="p-3 bg-light rounded border mb-3">
+                      <div class="small fw-semibold text-primary mb-1"><i class="bi bi-shield-check me-1"></i>Pencegahan Duplikasi Aktif</div>
+                      <div class="small text-muted">Setiap sinkronisasi Football API otomatis memeriksa ID eksternal (<code>external_match_id</code>) untuk memastikan jadwal resmi tidak terduplikasi.</div>
+                    </div>
+                    <div class="d-flex gap-2">
+                      <button class="btn btn-outline-primary btn-sm" onclick="AdminApp.openAddMatchModal()">
+                        <i class="bi bi-plus-lg me-1"></i> Tambah Jadwal Manual
+                      </button>
+                      <button class="btn btn-outline-success btn-sm" id="runManualSyncBtn">
+                        <i class="bi bi-arrow-repeat me-1"></i> Jalankan Sinkronisasi API
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-lg-4">
+                  <div class="card border-0 shadow-sm p-4 h-100 bg-primary text-white">
+                    <h5 class="fw-bold text-warning mb-2"><i class="bi bi-info-circle-fill me-2"></i>Panduan Singkat</h5>
+                    <ul class="small ps-3 mb-0" style="line-height: 1.8;">
+                      <li>Klik <strong>Skor</strong> di baris tabel untuk cepat memasukkan skor akhir laga.</li>
+                      <li>Semua waktu pertandingan menggunakan format <strong>WIB (Asia/Jakarta)</strong>.</li>
+                      <li>Ekspor backup data sewaktu-waktu di menu <em>Database Tools</em>.</li>
+                      <li>Deploy script Google Apps Script di folder <code>google-apps-script/</code> untuk production.</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 2: MATCHES CRUD PANEL -->
+            <div class="admin-view-panel d-none" id="panel_matches">
+              <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                  <h5 class="fw-bold mb-0 text-dark">Data Pertandingan PERSIB</h5>
+                  <button class="btn btn-sm btn-primary" onclick="AdminApp.openAddMatchModal()">
+                    <i class="bi bi-plus-circle me-1"></i> Tambah Pertandingan
+                  </button>
+                </div>
+                <div class="card-body p-0">
+                  <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                      <thead class="table-light">
+                        <tr>
+                          <th style="width: 40px;" class="text-center">No</th>
+                          <th>Tanggal & Waktu (WIB)</th>
+                          <th>Kompetisi</th>
+                          <th>Pertandingan</th>
+                          <th class="text-center">Skor</th>
+                          <th>Status & Sumber</th>
+                          <th class="text-end" style="width: 140px;">Aksi</th>
+                        </tr>
+                      </thead>
+                      <tbody id="adminMatchesTableBody">
+                        <!-- Populated by admin.js -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 3: TEAMS CRUD PANEL -->
+            <div class="admin-view-panel d-none" id="panel_teams">
+              <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                  <h5 class="fw-bold mb-0 text-dark">Daftar Tim Lawan & Logo</h5>
+                  <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#adminTeamModal">
+                    <i class="bi bi-plus-circle me-1"></i> Tambah Tim
+                  </button>
+                </div>
+                <div class="card-body p-0">
+                  <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                      <thead class="table-light">
+                        <tr>
+                          <th style="width: 40px;" class="text-center">No</th>
+                          <th style="width: 60px;">Logo</th>
+                          <th>Nama Tim</th>
+                          <th>Kode Singkat</th>
+                          <th class="text-end" style="width: 80px;">Aksi</th>
+                        </tr>
+                      </thead>
+                      <tbody id="adminTeamsTableBody">
+                        <!-- Populated by admin.js -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 4: STADIUMS CRUD PANEL -->
+            <div class="admin-view-panel d-none" id="panel_stadiums">
+              <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                  <h5 class="fw-bold mb-0 text-dark">Manajemen Stadion & Lokasi</h5>
+                  <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#adminStadiumModal">
+                    <i class="bi bi-plus-circle me-1"></i> Tambah Stadion
+                  </button>
+                </div>
+                <div class="card-body p-0">
+                  <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                      <thead class="table-light">
+                        <tr>
+                          <th style="width: 40px;" class="text-center">No</th>
+                          <th>Nama Stadion</th>
+                          <th>Kota / Lokasi</th>
+                          <th class="text-end" style="width: 80px;">Aksi</th>
+                        </tr>
+                      </thead>
+                      <tbody id="adminStadiumsTableBody">
+                        <!-- Populated by admin.js -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 5: COMPETITIONS PANEL -->
+            <div class="admin-view-panel d-none" id="panel_competitions">
+              <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3">
+                  <h5 class="fw-bold mb-0 text-dark">Kompetisi Resmi & Turnamen</h5>
+                </div>
+                <div class="card-body p-0">
+                  <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                      <thead class="table-light">
+                        <tr>
+                          <th style="width: 40px;" class="text-center">No</th>
+                          <th>Nama Kompetisi</th>
+                          <th>Kode</th>
+                          <th>ID Referensi</th>
+                        </tr>
+                      </thead>
+                      <tbody id="adminCompetitionsTableBody">
+                        <!-- Populated by admin.js -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 6: FOOTBALL API SYNC SETTINGS -->
+            <div class="admin-view-panel d-none" id="panel_sync">
+              <div class="row g-4">
+                <div class="col-lg-7">
+                  <div class="card border-0 shadow-sm p-4">
+                    <h5 class="fw-bold mb-3"><i class="bi bi-sliders me-2 text-primary"></i>Pengaturan Football API Provider</h5>
+                    
+                    <div class="mb-3">
+                      <label class="form-label fw-semibold small">Penyedia API (Provider):</label>
+                      <select class="form-select form-select-sm" id="syncProviderSelect">
+                        <option value="Football-Data.org">Football-Data.org (Rekomendasi Utama)</option>
+                        <option value="API-Football">API-Football (RapidAPI)</option>
+                        <option value="Custom">Custom Provider</option>
+                      </select>
+                    </div>
+
+                    <div class="mb-3">
+                      <label class="form-label fw-semibold small">Kode Liga / Kompetisi:</label>
+                      <input type="text" class="form-control form-control-sm" id="syncLeagueCode" value="IDN1" />
+                      <div class="form-text small">Kode kompetisi Liga 1 Indonesia pada feed penyedia data.</div>
+                    </div>
+
+                    <div class="mb-3">
+                      <label class="form-label fw-semibold small">Status Sinkronisasi Otomatis:</label>
+                      <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="syncAutoToggle" checked />
+                        <label class="form-check-label small" for="syncAutoToggle">Aktifkan Time-Driven Trigger di Google Apps Script (Setiap 6 Jam)</label>
+                      </div>
+                    </div>
+
+                    <div class="p-3 bg-light rounded border mb-4">
+                      <strong class="d-block mb-1 small text-dark"><i class="bi bi-shield-lock me-1"></i>Keamanan API Key:</strong>
+                      <p class="small text-muted mb-0">
+                        Sesuai standar keamanan sistem, API Key tidak disimpan di frontend publik, melainkan disimpan dengan aman di <strong>Script Properties</strong> Google Apps Script (Key: <code>FOOTBALL_API_KEY</code>).
+                      </p>
+                    </div>
+
+                    <button type="button" class="btn btn-primary btn-sm px-3" onclick="alert('Pengaturan API berhasil diperbarui!')">
+                      <i class="bi bi-save me-1"></i> Simpan Pengaturan API
+                    </button>
+                  </div>
+                </div>
+
+                <div class="col-lg-5">
+                  <div class="card border-0 shadow-sm p-4">
+                    <h5 class="fw-bold mb-3"><i class="bi bi-arrow-repeat me-2 text-success"></i>Trigger Manual</h5>
+                    <p class="small text-muted mb-3">
+                      Jalankan pengambilan jadwal, status, dan pembaruan skor langsung dari Football API feed tanpa menunggu jadwal otomatis.
+                    </p>
+                    <button class="btn btn-success w-100 py-2 fw-semibold mb-3 shadow-sm" id="runManualSyncBtnTab" onclick="AdminApp.handleManualSync ? AdminApp.handleManualSync() : document.getElementById('runManualSyncBtn').click()">
+                      <i class="bi bi-play-circle-fill me-1"></i> Jalankan Sinkronisasi Sekarang
+                    </button>
+                    <div class="small text-muted border-top pt-3">
+                      <strong>Fitur Pencegahan Duplikasi:</strong><br />
+                      Sistem memeriksa <code>external_match_id</code> sebelum menulis ke sheet <code>matches</code>. Jadwal yang sudah ada hanya akan diperbarui status dan skornya.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 7: SYNC LOGS PANEL -->
+            <div class="admin-view-panel d-none" id="panel_logs">
+              <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3">
+                  <h5 class="fw-bold mb-0 text-dark">Riwayat Log Sinkronisasi API</h5>
+                </div>
+                <div class="card-body p-0">
+                  <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                      <thead class="table-light">
+                        <tr>
+                          <th style="width: 40px;" class="text-center">No</th>
+                          <th>Waktu Eksekusi</th>
+                          <th>Tipe Sinkronisasi</th>
+                          <th>Status</th>
+                          <th>Keterangan / Pesan Hasil</th>
+                        </tr>
+                      </thead>
+                      <tbody id="adminSyncLogsTableBody">
+                        <!-- Populated by admin.js -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 8: DATABASE TOOLS PANEL -->
+            <div class="admin-view-panel d-none" id="panel_database">
+              <div class="row g-4">
+                <div class="col-lg-6">
+                  <div class="card border-0 shadow-sm p-4">
+                    <h5 class="fw-bold mb-2"><i class="bi bi-cloud-arrow-down me-2 text-primary"></i>Backup Database Google Sheets</h5>
+                    <p class="small text-muted mb-3">
+                      Unduh seluruh isi 8 sheet (users, matches, teams, competitions, seasons, stadiums, api_settings, sync_logs) dalam satu format file JSON terstruktur.
+                    </p>
+                    <button class="btn btn-outline-primary btn-sm px-3" id="backupDatabaseBtn">
+                      <i class="bi bi-download me-1"></i> Unduh File JSON Backup
+                    </button>
+                  </div>
+                </div>
+
+                <div class="col-lg-6">
+                  <div class="card border-0 shadow-sm p-4">
+                    <h5 class="fw-bold mb-2 text-danger"><i class="bi bi-arrow-counterclockwise me-2"></i>Reset Database</h5>
+                    <p class="small text-muted mb-3">
+                      Mengembalikan seluruh data simulasi kembali ke kondisi jadwal awal resmi PERSIB Bandung musim 2024/2025 - 2025/2026.
+                    </p>
+                    <button class="btn btn-outline-danger btn-sm px-3" id="resetDatabaseBtn">
+                      <i class="bi bi-exclamation-triangle me-1"></i> Reset ke Data Awal
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </main>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==========================================
+         MODALS (CRUD & QUICK SCORE)
+         ========================================== -->
+
+    <!-- MODAL: Add/Edit Match -->
+    <div class="modal fade modal-persib" id="adminMatchModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <form id="adminMatchForm">
+            <div class="modal-header">
+              <h5 class="modal-title fs-6 fw-bold text-white" id="adminMatchModalTitle">
+                Tambah Jadwal Pertandingan
+              </h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+              <input type="hidden" id="matchEditId" value="" />
+              
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label fw-semibold small">Kompetisi *</label>
+                  <select class="form-select form-select-sm" id="matchCompetition" required>
+                    <!-- Populated dynamically -->
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-semibold small">Musim *</label>
+                  <select class="form-select form-select-sm" id="matchSeason" required>
+                    <!-- Populated dynamically -->
+                  </select>
+                </div>
+
+                <div class="col-md-6">
+                  <label class="form-label fw-semibold small">Tim Tuan Rumah (Home) *</label>
+                  <select class="form-select form-select-sm" id="matchHomeTeam" required>
+                    <!-- Populated dynamically -->
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-semibold small">Tim Tamu (Away) *</label>
+                  <select class="form-select form-select-sm" id="matchAwayTeam" required>
+                    <!-- Populated dynamically -->
+                  </select>
+                </div>
+
+                <div class="col-md-6">
+                  <label class="form-label fw-semibold small">Stadion & Lokasi *</label>
+                  <select class="form-select form-select-sm" id="matchStadium" required>
+                    <!-- Populated dynamically -->
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label fw-semibold small">Tanggal Pertandingan *</label>
+                  <input type="date" class="form-control form-control-sm" id="matchDate" required />
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label fw-semibold small">Waktu Kick-off (WIB) *</label>
+                  <input type="time" class="form-control form-control-sm" id="matchTime" value="19:00" required />
+                </div>
+
+                <div class="col-md-3">
+                  <label class="form-label fw-semibold small">Skor Tuan Rumah</label>
+                  <input type="number" class="form-control form-control-sm" id="matchHomeScore" min="0" placeholder="-" />
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label fw-semibold small">Skor Tim Tamu</label>
+                  <input type="number" class="form-control form-control-sm" id="matchAwayScore" min="0" placeholder="-" />
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-semibold small">Status Pertandingan *</label>
+                  <select class="form-select form-select-sm" id="matchStatus" required>
+                    <option value="SCHEDULED">Terjadwal (SCHEDULED)</option>
+                    <option value="LIVE">Sedang Berlangsung (LIVE)</option>
+                    <option value="FINISHED">Selesai (FINISHED)</option>
+                    <option value="POSTPONED">Ditunda (POSTPONED)</option>
+                    <option value="CANCELLED">Dibatalkan (CANCELLED)</option>
+                  </select>
+                </div>
+
+                <div class="col-md-6">
+                  <label class="form-label fw-semibold small">Wasit Utama</label>
+                  <input type="text" class="form-control form-control-sm" id="matchReferee" placeholder="Nama wasit" />
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-semibold small">Siaran Resmi TV / Streaming</label>
+                  <input type="text" class="form-control form-control-sm" id="matchBroadcast" placeholder="Indosiar & Vidio" />
+                </div>
+
+                <div class="col-12">
+                  <label class="form-label fw-semibold small">Catatan Tambahan</label>
+                  <textarea class="form-control form-control-sm" id="matchNotes" rows="2" placeholder="Catatan atau informasi penting laga..."></textarea>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer bg-light py-2">
+              <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Batal</button>
+              <button type="submit" class="btn btn-sm btn-primary">
+                <i class="bi bi-save me-1"></i> Simpan Pertandingan
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: Quick Score Updater -->
+    <div class="modal fade modal-persib" id="adminScoreModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <form id="adminScoreForm">
+            <div class="modal-header">
+              <h5 class="modal-title fs-6 fw-bold text-white">
+                <i class="bi bi-pencil-square me-2"></i>Update Skor Akhir Pertandingan
+              </h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4 text-center">
+              <input type="hidden" id="scoreMatchId" value="" />
+              <div class="fw-bold mb-3 text-primary fs-6" id="scoreMatchTitle">Tuan Rumah vs Tim Tamu</div>
+
+              <div class="row align-items-center justify-content-center g-3 mb-3">
+                <div class="col-5">
+                  <label class="form-label small fw-semibold" id="scoreHomeName">Home</label>
+                  <input type="number" class="form-control form-control-lg text-center fw-bold" id="scoreHomeInput" min="0" required />
+                </div>
+                <div class="col-2 fs-4 fw-bold text-muted">-</div>
+                <div class="col-5">
+                  <label class="form-label small fw-semibold" id="scoreAwayName">Away</label>
+                  <input type="number" class="form-control form-control-lg text-center fw-bold" id="scoreAwayInput" min="0" required />
+                </div>
+              </div>
+
+              <div class="text-start">
+                <label class="form-label fw-semibold small">Status Laga:</label>
+                <select class="form-select form-select-sm" id="scoreStatusSelect">
+                  <option value="FINISHED" selected>Selesai (FINISHED)</option>
+                  <option value="LIVE">Sedang Berlangsung (LIVE)</option>
+                  <option value="POSTPONED">Ditunda (POSTPONED)</option>
+                </select>
+              </div>
+            </div>
+            <div class="modal-footer bg-light py-2">
+              <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Batal</button>
+              <button type="submit" class="btn btn-sm btn-success">
+                <i class="bi bi-check-lg me-1"></i> Simpan Skor
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: Add Team -->
+    <div class="modal fade modal-persib" id="adminTeamModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <form id="adminTeamForm">
+            <div class="modal-header">
+              <h5 class="modal-title fs-6 fw-bold text-white">Tambah Tim Lawan Baru</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+              <div class="mb-3">
+                <label class="form-label fw-semibold small">Nama Tim *</label>
+                <input type="text" class="form-control form-control-sm" id="teamNameInput" placeholder="Contoh: Semen Padang FC" required />
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-semibold small">Kode Singkat (3-4 Huruf)</label>
+                <input type="text" class="form-control form-control-sm text-uppercase" id="teamCodeInput" placeholder="Contoh: SPFC" maxlength="5" />
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-semibold small">URL Logo Tim (Opsional)</label>
+                <input type="url" class="form-control form-control-sm" id="teamLogoInput" placeholder="https://..." />
+                <div class="form-text small">Kosongkan jika ingin menggunakan badge inisial otomatis.</div>
+              </div>
+            </div>
+            <div class="modal-footer bg-light py-2">
+              <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Batal</button>
+              <button type="submit" class="btn btn-sm btn-primary">Simpan Tim</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: Add Stadium -->
+    <div class="modal fade modal-persib" id="adminStadiumModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <form id="adminStadiumForm">
+            <div class="modal-header">
+              <h5 class="modal-title fs-6 fw-bold text-white">Tambah Stadion Baru</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+              <div class="mb-3">
+                <label class="form-label fw-semibold small">Nama Stadion *</label>
+                <input type="text" class="form-control form-control-sm" id="stadiumNameInput" placeholder="Contoh: Stadion Maguwoharjo" required />
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-semibold small">Kota / Lokasi *</label>
+                <input type="text" class="form-control form-control-sm" id="stadiumCityInput" placeholder="Contoh: Sleman, D.I. Yogyakarta" required />
+              </div>
+            </div>
+            <div class="modal-footer bg-light py-2">
+              <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Batal</button>
+              <button type="submit" class="btn btn-sm btn-primary">Simpan Stadion</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap 5 Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Admin App Scripts -->
+    <script src="/assets/js/config.js"></script>
+    <script src="/assets/js/api.js"></script>
+    <script src="/assets/js/admin.js"></script>
+  </body>
+</html>

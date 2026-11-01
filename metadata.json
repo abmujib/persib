@@ -1,0 +1,6 @@
+{
+  "name": "PERSIB Match Schedule & Management",
+  "description": "Aplikasi website profesional untuk menampilkan dan mengelola jadwal pertandingan PERSIB Bandung menggunakan Google Sheets sebagai database, Google Apps Script sebagai backend API, dan GitHub Pages sebagai hosting frontend.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

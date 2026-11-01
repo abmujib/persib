@@ -1,0 +1,684 @@
+/**
+ * PERSIB Bandung Match Schedule & Management
+ * Style System - Sporty, Modern, Professional (Navy Blue & White Theme)
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap');
+
+:root {
+  --persib-blue-900: #001A4E;
+  --persib-blue-800: #002B7F;
+  --persib-blue-700: #0D47A1;
+  --persib-blue-600: #1565C0;
+  --persib-blue-500: #1E88E5;
+  --persib-blue-100: #E3F2FD;
+  --persib-blue-50: #F0F7FF;
+  
+  --persib-gold: #F59E0B;
+  --persib-gold-dark: #D97706;
+  --persib-gold-light: #FEF3C7;
+  
+  --persib-white: #FFFFFF;
+  --persib-slate-900: #0F172A;
+  --persib-slate-800: #1E293B;
+  --persib-slate-700: #334155;
+  --persib-slate-600: #475569;
+  --persib-slate-500: #64748B;
+  --persib-slate-400: #94A3B8;
+  --persib-slate-200: #E2E8F0;
+  --persib-slate-100: #F1F5F9;
+  --persib-slate-50: #F8FAFC;
+  
+  --persib-green: #10B981;
+  --persib-green-light: #ECFDF5;
+  --persib-red: #EF4444;
+  --persib-red-light: #FEF2F2;
+
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 43, 127, 0.08), 0 2px 4px -2px rgba(0, 43, 127, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 43, 127, 0.1), 0 4px 6px -4px rgba(0, 43, 127, 0.05);
+  --shadow-card: 0 2px 8px rgba(0, 26, 78, 0.06);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--persib-slate-50);
+  color: var(--persib-slate-800);
+  margin: 0;
+  padding: 0;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-mono);
+}
+
+/* Header & Navigation */
+.persib-navbar {
+  background-color: var(--persib-blue-900);
+  border-bottom: 3px solid var(--persib-gold);
+  padding: 0.85rem 0;
+}
+
+.persib-brand-logo {
+  height: 48px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+
+.persib-brand-title {
+  color: #FFFFFF;
+  font-weight: 800;
+  font-size: 1.25rem;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.persib-brand-subtitle {
+  color: var(--persib-gold);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.nav-link-custom {
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.5rem 0.85rem;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.nav-link-custom:hover, .nav-link-custom.active {
+  color: #FFFFFF;
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+.btn-persib-gold {
+  background-color: var(--persib-gold);
+  color: var(--persib-blue-900);
+  font-weight: 700;
+  border: none;
+  padding: 0.45rem 1rem;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.btn-persib-gold:hover {
+  background-color: var(--persib-gold-dark);
+  color: #FFFFFF;
+}
+
+/* Hero Section */
+.persib-hero {
+  position: relative;
+  background: linear-gradient(135deg, var(--persib-blue-900) 0%, var(--persib-blue-800) 100%);
+  color: #FFFFFF;
+  padding: 3rem 0 2.5rem;
+  overflow: hidden;
+}
+
+.persib-hero-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.25;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
+.persib-hero-content {
+  position: relative;
+  z-index: 2;
+}
+
+/* Next Match Countdown Card */
+.next-match-card {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem;
+  color: #FFFFFF;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+}
+
+.next-match-kicker {
+  color: var(--persib-gold);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.countdown-box {
+  background: rgba(0, 26, 78, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 0.5rem;
+  min-width: 65px;
+  text-align: center;
+}
+
+.countdown-num {
+  font-size: 1.6rem;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  color: var(--persib-gold);
+  line-height: 1;
+}
+
+.countdown-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.75);
+  margin-top: 0.25rem;
+}
+
+.team-emblem-large {
+  width: 68px;
+  height: 68px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+  transition: transform 0.2s;
+}
+
+.team-emblem-sm {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+}
+
+.team-name-lg {
+  font-weight: 700;
+  font-size: 1.1rem;
+  line-height: 1.2;
+}
+
+.vs-badge {
+  background: var(--persib-gold);
+  color: var(--persib-blue-900);
+  font-weight: 800;
+  font-size: 0.8rem;
+  padding: 0.35rem 0.65rem;
+  border-radius: 50%;
+  display: inline-block;
+  line-height: 1;
+}
+
+/* Statistics Ribbon */
+.stats-ribbon {
+  background: #FFFFFF;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: 1.25rem;
+  margin-top: -1.75rem;
+  position: relative;
+  z-index: 10;
+  border: 1px solid var(--persib-slate-200);
+}
+
+.stat-item {
+  text-align: center;
+  padding: 0.5rem 0.75rem;
+}
+
+.stat-val {
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--persib-blue-800);
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--persib-slate-500);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-top: 0.25rem;
+}
+
+/* Filter Controls */
+.filter-tabs .nav-link {
+  font-weight: 600;
+  color: var(--persib-slate-600);
+  border: 1px solid var(--persib-slate-200);
+  background: #FFFFFF;
+  border-radius: var(--radius-md);
+  padding: 0.55rem 1.1rem;
+  margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
+  transition: all 0.2s;
+}
+
+.filter-tabs .nav-link:hover {
+  color: var(--persib-blue-800);
+  border-color: var(--persib-blue-600);
+}
+
+.filter-tabs .nav-link.active {
+  background-color: var(--persib-blue-800);
+  color: #FFFFFF;
+  border-color: var(--persib-blue-800);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Match Card */
+.match-card {
+  background: #FFFFFF;
+  border: 1px solid var(--persib-slate-200);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  padding: 1.25rem;
+  transition: all 0.2s ease-in-out;
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.match-card:hover {
+  border-color: var(--persib-blue-600);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.match-meta-header {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--persib-slate-500);
+  margin-bottom: 0.85rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.match-status-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.status-scheduled {
+  background-color: var(--persib-blue-50);
+  color: var(--persib-blue-700);
+  border: 1px solid var(--persib-blue-100);
+}
+
+.status-live {
+  background-color: var(--persib-red-light);
+  color: var(--persib-red);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  animation: pulse-border 1.8s infinite;
+}
+
+.status-finished {
+  background-color: var(--persib-slate-100);
+  color: var(--persib-slate-700);
+  border: 1px solid var(--persib-slate-200);
+}
+
+.status-warning {
+  background-color: var(--persib-gold-light);
+  color: var(--persib-gold-dark);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+@keyframes pulse-border {
+  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+  70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+.match-score-pill {
+  font-family: var(--font-mono);
+  font-size: 1.35rem;
+  font-weight: 800;
+  background: var(--persib-blue-50);
+  color: var(--persib-blue-900);
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--persib-blue-100);
+  min-width: 68px;
+  text-align: center;
+}
+
+.match-time-pill {
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--persib-blue-800);
+  background: var(--persib-slate-100);
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-sm);
+}
+
+/* Calendar View */
+.calendar-card {
+  background: #FFFFFF;
+  border: 1px solid var(--persib-slate-200);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.calendar-day-name {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--persib-slate-500);
+  padding-bottom: 0.5rem;
+  text-transform: uppercase;
+}
+
+.calendar-day-cell {
+  aspect-ratio: 1;
+  border: 1px solid var(--persib-slate-200);
+  border-radius: var(--radius-sm);
+  padding: 4px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: all 0.15s;
+  background: #FFFFFF;
+}
+
+.calendar-day-cell:hover {
+  background: var(--persib-blue-50);
+  border-color: var(--persib-blue-500);
+}
+
+.calendar-day-cell.other-month {
+  color: var(--persib-slate-400);
+  background: var(--persib-slate-50);
+}
+
+.calendar-day-cell.today {
+  border-color: var(--persib-gold);
+  border-width: 2px;
+  font-weight: 700;
+}
+
+.calendar-day-cell.has-match {
+  background: var(--persib-blue-50);
+  border-color: var(--persib-blue-600);
+  font-weight: 700;
+}
+
+.calendar-match-indicator {
+  background-color: var(--persib-blue-800);
+  color: #FFFFFF;
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 1px 3px;
+  border-radius: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 2px;
+}
+
+/* Gas Bar / Sync Info Status */
+.gas-status-bar {
+  background: #FFFFFF;
+  border: 1px solid var(--persib-slate-200);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+}
+
+.gas-indicator-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 0.4rem;
+}
+
+.dot-connected {
+  background-color: var(--persib-green);
+}
+
+.dot-local {
+  background-color: var(--persib-gold);
+}
+
+/* Admin Dashboard Specific */
+.admin-sidebar {
+  background: var(--persib-blue-900);
+  min-height: 100vh;
+  color: #FFFFFF;
+  padding: 1.5rem 1rem;
+}
+
+.admin-nav-item {
+  color: rgba(255, 255, 255, 0.8);
+  padding: 0.65rem 1rem;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+  margin-bottom: 0.35rem;
+}
+
+.admin-nav-item:hover, .admin-nav-item.active {
+  background: rgba(255, 255, 255, 0.15);
+  color: #FFFFFF;
+}
+
+.admin-card {
+  background: #FFFFFF;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--persib-slate-200);
+  box-shadow: var(--shadow-sm);
+  padding: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+/* Modal styling */
+.modal-persib .modal-header {
+  background-color: var(--persib-blue-900);
+  color: #FFFFFF;
+  border-top-left-radius: var(--radius-lg);
+  border-top-right-radius: var(--radius-lg);
+}
+
+.modal-persib .modal-header .btn-close {
+  filter: invert(1);
+}
+
+/* ==========================================================================
+   PRINT STYLES FOR A4 PORTRAIT AND LANDSCAPE (PERSIB BANDUNG OFFICIAL)
+   ========================================================================== */
+@media print {
+  body {
+    background: #FFFFFF !important;
+    color: #000000 !important;
+    font-size: 10pt;
+  }
+
+  /* Hide interactive UI elements */
+  .no-print,
+  .persib-navbar,
+  .gas-status-bar,
+  .filter-tabs,
+  .btn,
+  .modal,
+  .pagination,
+  .next-match-card,
+  #calendarView,
+  footer {
+    display: none !important;
+  }
+
+  /* Make print container visible */
+  #printDocumentArea {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .print-header {
+    border-bottom: 3px double #002B7F;
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+    display: flex !important;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .print-club-title {
+    font-size: 16pt;
+    font-weight: 800;
+    color: #002B7F;
+    margin: 0;
+    text-transform: uppercase;
+  }
+
+  .print-doc-subtitle {
+    font-size: 11pt;
+    font-weight: 600;
+    color: #333333;
+    margin-top: 4px;
+  }
+
+  .print-meta-text {
+    font-size: 8pt;
+    color: #555555;
+  }
+
+  .print-table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    margin-bottom: 15px;
+  }
+
+  .print-table th {
+    background-color: #002B7F !important;
+    color: #FFFFFF !important;
+    font-size: 9pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 6px 8px;
+    border: 1px solid #002B7F !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .print-table td {
+    padding: 6px 8px;
+    font-size: 8.5pt;
+    border: 1px solid #CCCCCC !important;
+    vertical-align: middle;
+  }
+
+  .print-table tr:nth-child(even) td {
+    background-color: #F8FAFC !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .print-stats-box {
+    border: 1px solid #002B7F;
+    background-color: #F0F7FF !important;
+    padding: 8px 12px;
+    margin-bottom: 14px;
+    border-radius: 4px;
+    display: flex !important;
+    justify-content: space-around;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .print-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    font-size: 8pt;
+    color: #777777;
+    border-top: 1px solid #CCCCCC;
+    padding-top: 6px;
+    display: flex !important;
+    justify-content: space-between;
+  }
+
+  /* Page orientation controls */
+  @page {
+    size: A4 portrait;
+    margin: 12mm 10mm 15mm 10mm;
+  }
+
+  .page-landscape {
+    page-break-before: always;
+  }
+
+  tr {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}
