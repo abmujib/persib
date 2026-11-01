@@ -50,6 +50,28 @@ async function generateStaticApi() {
     const nextMatch = await MatchDataService.getNextMatch();
     const stats = await MatchDataService.getStatistics();
 
+    const apiOverview = JSON.stringify({
+      status: 'success',
+      api: {
+        name: 'PERSIB Bandung Match Schedule & Scores JSON API',
+        version: '1.0.0',
+        club: 'PERSIB Bandung',
+        timezone: 'Asia/Jakarta (WIB)',
+        documentation: 'RESTful API Publik untuk data jadwal, skor, statistik PERSIB Bandung.'
+      },
+      endpoints: [
+        { path: '/api/v1/schedule.json', description: 'Jadwal pertandingan mendatang' },
+        { path: '/api/v1/scores.json', description: 'Hasil skor pertandingan selesai' },
+        { path: '/api/v1/next-match.json', description: 'Pertandingan terdekat' },
+        { path: '/api/v1/matches.json', description: 'Semua pertandingan' },
+        { path: '/api/v1/stats.json', description: 'Statistik musim klub' },
+        { path: '/api/v1/teams.json', description: 'Daftar tim lawan' },
+        { path: '/api/v1/competitions.json', description: 'Daftar kompetisi' },
+        { path: '/api/v1/stadiums.json', description: 'Daftar stadion' }
+      ]
+    }, null, 2);
+    fs.writeFileSync(path.join(publicApiDir, 'index.json'), apiOverview);
+
     saveEndpoint('matches', sendFormat(matches, { total: matches.length }));
     saveEndpoint('schedule', sendFormat(schedule, { total_upcoming: schedule.length }));
     saveEndpoint('scores', sendFormat(scores, { total_completed: scores.length }));
