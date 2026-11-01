@@ -86,7 +86,8 @@ const PrintService = (function() {
         year: 'numeric'
       }).format(d);
 
-      let scoreOrTime = `${m.match_time || '19:00'} WIB`;
+      const cleanTime = (!m.match_time || String(m.match_time).includes('1899') || String(m.match_time).includes('-')) ? '19:00' : m.match_time;
+      let scoreOrTime = `${cleanTime} WIB`;
       if (m.status === 'FINISHED') {
         scoreOrTime = `<strong>${m.home_score ?? 0} - ${m.away_score ?? 0}</strong>`;
       } else if (m.status === 'LIVE') {

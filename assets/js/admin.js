@@ -172,7 +172,7 @@ const AdminApp = (function() {
           <td class="text-center">${idx + 1}</td>
           <td>
             <strong>${m.match_date}</strong><br>
-            <small class="text-muted font-monospace">${m.match_time || '19:00'} WIB</small>
+            <small class="text-muted font-monospace">${(!m.match_time || String(m.match_time).includes('1899') || String(m.match_time).includes('-')) ? '19:00' : m.match_time} WIB</small>
           </td>
           <td>
             <span class="badge bg-light text-dark border">${m.competition?.name || '-'}</span>
@@ -216,21 +216,36 @@ const AdminApp = (function() {
     const tbody = document.getElementById('adminTeamsTableBody');
     if (!tbody) return;
 
+    if (teams.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-muted">Belum ada tim lawan terdaftar.</td></tr>';
+      return;
+    }
+
     tbody.innerHTML = teams.map((t, idx) => `
       <tr>
         <td class="text-center">${idx + 1}</td>
         <td>
-          <img src="${t.logo}" alt="${t.name}" style="height:32px;width:32px;object-fit:contain;" 
-               onerror="this.src='https://placehold.co/40x40/002B7F/ffffff?text=${t.code || 'TIM'}'" />
+          <img src="${t.logo}" alt="${escapeHtml(t.name)}" style="height:34px;width:34px;object-fit:contain;" 
+               onerror="this.src='https://placehold.co/40x40/002B7F/ffffff?text=${encodeURIComponent((t.code || t.name || 'TIM').substring(0, 3).toUpperCase())}'" />
         </td>
-        <td><strong>${t.name}</strong> ${t.id === 'T-001' ? '<span class="badge bg-primary ms-1">Tim Utama</span>' : ''}</td>
-        <td><span class="badge bg-light text-dark font-monospace">${t.code || '-'}</span></td>
+        <td><strong>${escapeHtml(t.name)}</strong> ${t.id === 'T-001' ? '<span class="badge bg-primary ms-1">Tim Utama</span>' : ''}</td>
+        <td><span class="badge bg-light text-dark font-monospace">${escapeHtml(t.code || '-')}</span></td>
+        <td><span class="badge bg-secondary-subtle text-secondary font-monospace" style="font-size:0.7rem;">${t.id}</span></td>
         <td class="text-end">
-          ${t.id !== 'T-001' ? `
-            <button class="btn btn-sm btn-outline-danger" onclick="AdminApp.deleteTeam('${t.id}')">
-              <i class="bi bi-trash"></i>
+          <div class="btn-group btn-group-sm">
+            <button class="btn btn-outline-primary" title="Edit Tim" onclick="AdminApp.openEditTeamModal('${t.id}')">
+              <i class="bi bi-pencil"></i>
             </button>
-          ` : '<span class="text-muted small">Locked</span>'}
+            ${t.id !== 'T-001' ? `
+              <button class="btn btn-outline-danger" title="Hapus Tim" onclick="AdminApp.deleteTeam('${t.id}')">
+                <i class="bi bi-trash"></i>
+              </button>
+            ` : `
+              <button class="btn btn-outline-secondary" disabled title="Tim utama tidak dapat dihapus">
+                <i class="bi bi-lock"></i>
+              </button>
+            `}
+          </div>
         </td>
       </tr>
     `).join('');
@@ -240,15 +255,26 @@ const AdminApp = (function() {
     const tbody = document.getElementById('adminStadiumsTableBody');
     if (!tbody) return;
 
+    if (stadiums.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-muted">Belum ada data stadion.</td></tr>';
+      return;
+    }
+
     tbody.innerHTML = stadiums.map((s, idx) => `
       <tr>
         <td class="text-center">${idx + 1}</td>
-        <td><strong>${s.name}</strong></td>
-        <td>${s.city || '-'}</td>
+        <td><strong>${escapeHtml(s.name)}</strong></td>
+        <td>${escapeHtml(s.city || '-')}</td>
+        <td><span class="badge bg-secondary-subtle text-secondary font-monospace" style="font-size:0.7rem;">${s.id}</span></td>
         <td class="text-end">
-          <button class="btn btn-sm btn-outline-danger" onclick="AdminApp.deleteStadium('${s.id}')">
-            <i class="bi bi-trash"></i>
-          </button>
+          <div class="btn-group btn-group-sm">
+            <button class="btn btn-outline-primary" title="Edit Stadion" onclick="AdminApp.openEditStadiumModal('${s.id}')">
+              <i class="bi bi-pencil"></i>
+            </button>
+            <button class="btn btn-outline-danger" title="Hapus Stadion" onclick="AdminApp.deleteStadium('${s.id}')">
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
         </td>
       </tr>
     `).join('');
@@ -258,12 +284,31 @@ const AdminApp = (function() {
     const tbody = document.getElementById('adminCompetitionsTableBody');
     if (!tbody) return;
 
+    if (competitions.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-muted">Belum ada data kompetisi.</td></tr>';
+      return;
+    }
+
     tbody.innerHTML = competitions.map((c, idx) => `
       <tr>
         <td class="text-center">${idx + 1}</td>
-        <td><strong>${c.name}</strong></td>
-        <td><span class="badge bg-light text-dark font-monospace">${c.code || '-'}</span></td>
-        <td>${c.id}</td>
+        <td>
+          <img src="${c.logo}" alt="${escapeHtml(c.name)}" style="height:32px;width:32px;object-fit:contain;" 
+               onerror="this.src='https://placehold.co/40x40/002B7F/ffffff?text=${encodeURIComponent((c.code || c.name || 'COMP').substring(0, 4).toUpperCase())}'" />
+        </td>
+        <td><strong>${escapeHtml(c.name)}</strong></td>
+        <td><span class="badge bg-light text-dark font-monospace">${escapeHtml(c.code || '-')}</span></td>
+        <td><span class="badge bg-secondary-subtle text-secondary font-monospace" style="font-size:0.7rem;">${c.id}</span></td>
+        <td class="text-end">
+          <div class="btn-group btn-group-sm">
+            <button class="btn btn-outline-primary" title="Edit Kompetisi" onclick="AdminApp.openEditCompetitionModal('${c.id}')">
+              <i class="bi bi-pencil"></i>
+            </button>
+            <button class="btn btn-outline-danger" title="Hapus Kompetisi" onclick="AdminApp.deleteCompetition('${c.id}')">
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
+        </td>
       </tr>
     `).join('');
   }
@@ -332,6 +377,12 @@ const AdminApp = (function() {
     const stadiumForm = document.getElementById('adminStadiumForm');
     if (stadiumForm) {
       stadiumForm.addEventListener('submit', handleSaveStadium);
+    }
+
+    // Add Competition Form Submit
+    const compForm = document.getElementById('adminCompetitionForm');
+    if (compForm) {
+      compForm.addEventListener('submit', handleSaveCompetition);
     }
 
     // Manual Sync Button
@@ -489,16 +540,46 @@ const AdminApp = (function() {
     }
   }
 
-  // Save Team
+  // ==========================================
+  // TEAMS CRUD HANDLERS
+  // ==========================================
+  function openAddTeamModal() {
+    document.getElementById('adminTeamModalTitle').textContent = 'Tambah Tim Lawan Baru';
+    document.getElementById('teamEditId').value = '';
+    document.getElementById('adminTeamForm').reset();
+    const modal = new bootstrap.Modal(document.getElementById('adminTeamModal'));
+    modal.show();
+  }
+
+  function openEditTeamModal(id) {
+    const t = teams.find(item => String(item.id) === String(id));
+    if (!t) return;
+
+    document.getElementById('adminTeamModalTitle').textContent = `Edit Data Tim: ${t.name}`;
+    document.getElementById('teamEditId').value = t.id;
+    document.getElementById('teamNameInput').value = t.name || '';
+    document.getElementById('teamCodeInput').value = t.code || '';
+    document.getElementById('teamLogoInput').value = t.logo || '';
+
+    const modal = new bootstrap.Modal(document.getElementById('adminTeamModal'));
+    modal.show();
+  }
+
   async function handleSaveTeam(e) {
     e.preventDefault();
+    const editId = document.getElementById('teamEditId').value.trim();
     const name = document.getElementById('teamNameInput').value.trim();
     const code = document.getElementById('teamCodeInput').value.trim().toUpperCase();
     const logo = document.getElementById('teamLogoInput').value.trim();
 
     try {
-      await ApiService.createTeam({ name, code, logo });
-      showToast(`Tim ${name} berhasil ditambahkan!`, 'success');
+      if (editId) {
+        await ApiService.updateTeam(editId, { name, code, logo });
+        showToast(`Data tim ${name} berhasil diperbarui!`, 'success');
+      } else {
+        await ApiService.createTeam({ name, code, logo });
+        showToast(`Tim ${name} berhasil ditambahkan!`, 'success');
+      }
 
       const modalEl = document.getElementById('adminTeamModal');
       const modal = bootstrap.Modal.getInstance(modalEl);
@@ -507,27 +588,66 @@ const AdminApp = (function() {
 
       await loadAllAdminData();
     } catch (err) {
-      showToast('Gagal menambahkan tim: ' + err.message, 'danger');
+      showToast('Gagal memproses data tim: ' + err.message, 'danger');
     }
   }
 
-  // Delete Team
   async function deleteTeam(id) {
-    if (!confirm('Hapus tim lawan ini dari daftar?')) return;
-    await ApiService.deleteTeam(id);
-    showToast('Tim telah dihapus.', 'info');
-    await loadAllAdminData();
+    if (id === 'T-001') {
+      alert('Tim utama PERSIB Bandung tidak boleh dihapus!');
+      return;
+    }
+    const t = teams.find(item => String(item.id) === String(id));
+    const teamName = t ? t.name : 'tim ini';
+    if (!confirm(`Apakah Anda yakin ingin menghapus "${teamName}" dari daftar tim lawan?`)) return;
+
+    try {
+      await ApiService.deleteTeam(id);
+      showToast(`Tim "${teamName}" telah dihapus.`, 'info');
+      await loadAllAdminData();
+    } catch (err) {
+      showToast('Gagal menghapus tim: ' + err.message, 'danger');
+    }
   }
 
-  // Save Stadium
+  // ==========================================
+  // STADIUMS CRUD HANDLERS
+  // ==========================================
+  function openAddStadiumModal() {
+    document.getElementById('adminStadiumModalTitle').textContent = 'Tambah Stadion Baru';
+    document.getElementById('stadiumEditId').value = '';
+    document.getElementById('adminStadiumForm').reset();
+    const modal = new bootstrap.Modal(document.getElementById('adminStadiumModal'));
+    modal.show();
+  }
+
+  function openEditStadiumModal(id) {
+    const s = stadiums.find(item => String(item.id) === String(id));
+    if (!s) return;
+
+    document.getElementById('adminStadiumModalTitle').textContent = `Edit Data Stadion: ${s.name}`;
+    document.getElementById('stadiumEditId').value = s.id;
+    document.getElementById('stadiumNameInput').value = s.name || '';
+    document.getElementById('stadiumCityInput').value = s.city || '';
+
+    const modal = new bootstrap.Modal(document.getElementById('adminStadiumModal'));
+    modal.show();
+  }
+
   async function handleSaveStadium(e) {
     e.preventDefault();
+    const editId = document.getElementById('stadiumEditId').value.trim();
     const name = document.getElementById('stadiumNameInput').value.trim();
     const city = document.getElementById('stadiumCityInput').value.trim();
 
     try {
-      await ApiService.createStadium({ name, city });
-      showToast(`Stadion ${name} berhasil didaftarkan!`, 'success');
+      if (editId) {
+        await ApiService.updateStadium(editId, { name, city });
+        showToast(`Data stadion ${name} berhasil diperbarui!`, 'success');
+      } else {
+        await ApiService.createStadium({ name, city });
+        showToast(`Stadion ${name} berhasil didaftarkan!`, 'success');
+      }
 
       const modalEl = document.getElementById('adminStadiumModal');
       const modal = bootstrap.Modal.getInstance(modalEl);
@@ -536,33 +656,112 @@ const AdminApp = (function() {
 
       await loadAllAdminData();
     } catch (err) {
-      showToast('Gagal mendaftarkan stadion: ' + err.message, 'danger');
+      showToast('Gagal memproses data stadion: ' + err.message, 'danger');
     }
   }
 
   async function deleteStadium(id) {
-    if (!confirm('Hapus stadion ini?')) return;
-    await ApiService.deleteStadium(id);
-    showToast('Stadion telah dihapus.', 'info');
-    await loadAllAdminData();
+    const s = stadiums.find(item => String(item.id) === String(id));
+    const stadiumName = s ? s.name : 'stadion ini';
+    if (!confirm(`Apakah Anda yakin ingin menghapus "${stadiumName}"?`)) return;
+
+    try {
+      await ApiService.deleteStadium(id);
+      showToast(`Stadion "${stadiumName}" telah dihapus.`, 'info');
+      await loadAllAdminData();
+    } catch (err) {
+      showToast('Gagal menghapus stadion: ' + err.message, 'danger');
+    }
   }
 
-  // Manual Football API Sync
+  // ==========================================
+  // COMPETITIONS CRUD HANDLERS
+  // ==========================================
+  function openAddCompetitionModal() {
+    document.getElementById('adminCompModalTitle').textContent = 'Tambah Kompetisi & Turnamen Baru';
+    document.getElementById('compEditId').value = '';
+    document.getElementById('adminCompetitionForm').reset();
+    const modal = new bootstrap.Modal(document.getElementById('adminCompetitionModal'));
+    modal.show();
+  }
+
+  function openEditCompetitionModal(id) {
+    const c = competitions.find(item => String(item.id) === String(id));
+    if (!c) return;
+
+    document.getElementById('adminCompModalTitle').textContent = `Edit Kompetisi: ${c.name}`;
+    document.getElementById('compEditId').value = c.id;
+    document.getElementById('compNameInput').value = c.name || '';
+    document.getElementById('compCodeInput').value = c.code || '';
+    document.getElementById('compLogoInput').value = c.logo || '';
+
+    const modal = new bootstrap.Modal(document.getElementById('adminCompetitionModal'));
+    modal.show();
+  }
+
+  async function handleSaveCompetition(e) {
+    e.preventDefault();
+    const editId = document.getElementById('compEditId').value.trim();
+    const name = document.getElementById('compNameInput').value.trim();
+    const code = document.getElementById('compCodeInput').value.trim().toUpperCase();
+    const logo = document.getElementById('compLogoInput').value.trim();
+
+    try {
+      if (editId) {
+        await ApiService.updateCompetition(editId, { name, code, logo });
+        showToast(`Kompetisi ${name} berhasil diperbarui!`, 'success');
+      } else {
+        await ApiService.createCompetition({ name, code, logo });
+        showToast(`Kompetisi ${name} berhasil ditambahkan!`, 'success');
+      }
+
+      const modalEl = document.getElementById('adminCompetitionModal');
+      const modal = bootstrap.Modal.getInstance(modalEl);
+      if (modal) modal.hide();
+      document.getElementById('adminCompetitionForm').reset();
+
+      await loadAllAdminData();
+    } catch (err) {
+      showToast('Gagal memproses data kompetisi: ' + err.message, 'danger');
+    }
+  }
+
+  async function deleteCompetition(id) {
+    const c = competitions.find(item => String(item.id) === String(id));
+    const compName = c ? c.name : 'kompetisi ini';
+    if (!confirm(`Apakah Anda yakin ingin menghapus "${compName}" dari daftar kompetisi?`)) return;
+
+    try {
+      await ApiService.deleteCompetition(id);
+      showToast(`Kompetisi "${compName}" telah dihapus.`, 'info');
+      await loadAllAdminData();
+    } catch (err) {
+      showToast('Gagal menghapus kompetisi: ' + err.message, 'danger');
+    }
+  }
+
+  // ==========================================
+  // SYNC & DATABASE TOOLS
+  // ==========================================
   async function handleManualSync() {
     const btn = document.getElementById('runManualSyncBtn');
-    const originalText = btn.innerHTML;
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Menjalankan Sinkronisasi API...';
+    const originalText = btn ? btn.innerHTML : '';
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Menjalankan Sinkronisasi API...';
+    }
 
     try {
       const res = await ApiService.triggerSync();
-      showToast(`Sinkronisasi Selesai! ${res.records_processed} data diperiksa dan diperbarui.`, 'success');
+      showToast(`Sinkronisasi Selesai! ${res.records_processed || 1} data diperiksa dan diperbarui.`, 'success');
       await loadAllAdminData();
     } catch (err) {
       showToast('Sinkronisasi gagal: ' + err.message, 'danger');
     } finally {
-      btn.disabled = false;
-      btn.innerHTML = originalText;
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+      }
     }
   }
 
@@ -599,9 +798,9 @@ const AdminApp = (function() {
 
     const toastId = 'toast_' + Date.now();
     const html = `
-      <div id="${toastId}" class="toast align-items-center text-bg-${type} border-0" role="alert" aria-live="assertive" aria-atomic="true">
+      <div id="${toastId}" class="toast align-items-center text-bg-${type} border-0 shadow" role="alert" aria-live="assertive" aria-atomic="true">
         <div class="d-flex">
-          <div class="toast-body">${message}</div>
+          <div class="toast-body fw-semibold">${message}</div>
           <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
         </div>
       </div>
@@ -629,8 +828,16 @@ const AdminApp = (function() {
     openEditMatchModal,
     openScoreModal,
     deleteMatch,
+    openAddTeamModal,
+    openEditTeamModal,
     deleteTeam,
-    deleteStadium
+    openAddStadiumModal,
+    openEditStadiumModal,
+    deleteStadium,
+    openAddCompetitionModal,
+    openEditCompetitionModal,
+    deleteCompetition,
+    handleManualSync
   };
 })();
 

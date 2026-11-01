@@ -110,6 +110,42 @@ function doPost(e) {
         validateAuth(payload.token);
         result = handleDeleteMatch(payload.id);
         break;
+      case 'create_team':
+        validateAuth(payload.token);
+        result = handleCreateTeam(payload.team);
+        break;
+      case 'update_team':
+        validateAuth(payload.token);
+        result = handleUpdateTeam(payload.id, payload.team);
+        break;
+      case 'delete_team':
+        validateAuth(payload.token);
+        result = handleDeleteTeam(payload.id);
+        break;
+      case 'create_stadium':
+        validateAuth(payload.token);
+        result = handleCreateStadium(payload.stadium);
+        break;
+      case 'update_stadium':
+        validateAuth(payload.token);
+        result = handleUpdateStadium(payload.id, payload.stadium);
+        break;
+      case 'delete_stadium':
+        validateAuth(payload.token);
+        result = handleDeleteStadium(payload.id);
+        break;
+      case 'create_competition':
+        validateAuth(payload.token);
+        result = handleCreateCompetition(payload.competition);
+        break;
+      case 'update_competition':
+        validateAuth(payload.token);
+        result = handleUpdateCompetition(payload.id, payload.competition);
+        break;
+      case 'delete_competition':
+        validateAuth(payload.token);
+        result = handleDeleteCompetition(payload.id);
+        break;
       case 'sync':
         validateAuth(payload.token);
         result = runFootballApiSync('MANUAL_ADMIN');
@@ -152,8 +188,11 @@ function getSheetRowsAsObjects(sheetName) {
       var headerKey = String(headers[j]).trim();
       var cellVal = row[j];
       if (cellVal instanceof Date) {
-        // Format YYYY-MM-DD jika tanggal
-        cellVal = Utilities.formatDate(cellVal, 'Asia/Jakarta', 'yyyy-MM-dd');
+        if (headerKey === 'match_time') {
+          cellVal = Utilities.formatDate(cellVal, 'Asia/Jakarta', 'HH:mm');
+        } else {
+          cellVal = Utilities.formatDate(cellVal, 'Asia/Jakarta', 'yyyy-MM-dd');
+        }
       }
       obj[headerKey] = cellVal;
     }
@@ -374,8 +413,11 @@ function validateAuth(token) {
 function handleCreateMatch(m) {
   var ss = getSpreadsheet();
   var sheet = ss.getSheetByName('matches');
-  var newId = 'MATCH-' + Utilities.formatDate(new Date(), 'Asia/Jakarta', 'yyyyMMdd') + '-' + Math.floor(Math.random() * 1000);
+  var newId = 'MATCH-' + Utilities.formatDate(new Date(), 'Asia/Jakarta', 'yyyyMMdd') + '-' + Math.floor(100 + Math.random() * 900);
   var nowStr = Utilities.formatDate(new Date(), 'Asia/Jakarta', "yyyy-MM-dd'T'HH:mm:ss");
+
+  var homeScore = (m.home_score !== '' && m.home_score !== null && m.home_score !== undefined) ? Number(m.home_score) : '';
+  var awayScore = (m.away_score !== '' && m.away_score !== null && m.away_score !== undefined) ? Number(m.away_score) : '';
 
   var row = [
     newId,
@@ -387,16 +429,16 @@ function handleCreateMatch(m) {
     m.stadium_id,
     m.match_date,
     m.match_time || '19:00',
-    m.home_score !== '' && m.home_score !== null ? m.home_score : '',
-    m.away_score !== '' && m.away_score !== null ? m.away_score : '',
+    homeScore,
+    awayScore,
     m.status || 'SCHEDULED',
-    'Manual Input',
+    m.data_source || 'Manual Input',
     nowStr,
     nowStr
   ];
 
   sheet.appendRow(row);
-  return { status: 'success', data: { id: newId } };
+  return { status: 'success', message: 'Pertandingan berhasil ditambahkan.', data: { id: newId } };
 }
 
 /**
@@ -411,20 +453,23 @@ function handleUpdateMatch(id, m) {
   var nowStr = Utilities.formatDate(new Date(), 'Asia/Jakarta', "yyyy-MM-dd'T'HH:mm:ss");
 
   for (var i = 1; i < data.length; i++) {
-    if (data[i][idColIdx] === id) {
-      // Temukan baris
+    if (String(data[i][idColIdx]) === String(id)) {
       var rowNum = i + 1;
       for (var key in m) {
         var colIdx = headers.indexOf(key);
         if (colIdx !== -1) {
-          sheet.getRange(rowNum, colIdx + 1).setValue(m[key]);
+          var val = m[key];
+          if (key === 'home_score' || key === 'away_score') {
+            val = (val !== '' && val !== null && val !== undefined) ? Number(val) : '';
+          }
+          sheet.getRange(rowNum, colIdx + 1).setValue(val);
         }
       }
       var updatedColIdx = headers.indexOf('updated_at');
       if (updatedColIdx !== -1) {
         sheet.getRange(rowNum, updatedColIdx + 1).setValue(nowStr);
       }
-      return { status: 'success', message: 'Pertandingan berhasil diperbarui.' };
+      return { status: 'success', message: 'Pertandingan berhasil diperbarui.', data: { id: id } };
     }
   }
   return { status: 'error', message: 'Pertandingan tidak ditemukan.' };
@@ -440,10 +485,220 @@ function handleDeleteMatch(id) {
   var idColIdx = data[0].indexOf('id');
 
   for (var i = 1; i < data.length; i++) {
-    if (data[i][idColIdx] === id) {
+    if (String(data[i][idColIdx]) === String(id)) {
       sheet.deleteRow(i + 1);
       return { status: 'success', message: 'Pertandingan berhasil dihapus.' };
     }
   }
   return { status: 'error', message: 'ID pertandingan tidak ditemukan.' };
+}
+
+/**
+ * ============================================================================
+ * CRUD TIM LAWAN & LOGO (Sheet 'teams')
+ * ============================================================================
+ */
+function handleCreateTeam(team) {
+  var ss = getSpreadsheet();
+  var sheet = ss.getSheetByName('teams');
+  var data = sheet.getDataRange().getValues();
+  var count = data.length;
+  var newId = 'T-' + String(count).padStart(3, '0');
+  var nowStr = Utilities.formatDate(new Date(), 'Asia/Jakarta', "yyyy-MM-dd'T'HH:mm:ss");
+
+  var name = (team.name || 'Tim Baru').trim();
+  var logo = (team.logo || '').trim() || ('https://placehold.co/100x100/002B7F/ffffff?text=' + encodeURIComponent(name.substring(0, 3).toUpperCase()));
+
+  var row = [
+    newId,
+    name,
+    logo,
+    nowStr,
+    nowStr
+  ];
+  sheet.appendRow(row);
+  return { status: 'success', message: 'Tim berhasil ditambahkan.', data: { id: newId, name: name, logo: logo } };
+}
+
+function handleUpdateTeam(id, team) {
+  var ss = getSpreadsheet();
+  var sheet = ss.getSheetByName('teams');
+  var data = sheet.getDataRange().getValues();
+  var headers = data[0];
+  var idColIdx = headers.indexOf('id');
+  var nowStr = Utilities.formatDate(new Date(), 'Asia/Jakarta', "yyyy-MM-dd'T'HH:mm:ss");
+
+  for (var i = 1; i < data.length; i++) {
+    if (String(data[i][idColIdx]) === String(id)) {
+      var rowNum = i + 1;
+      if (team.name !== undefined) {
+        var nameCol = headers.indexOf('name');
+        if (nameCol !== -1) sheet.getRange(rowNum, nameCol + 1).setValue(String(team.name).trim());
+      }
+      if (team.logo !== undefined) {
+        var logoCol = headers.indexOf('logo');
+        if (logoCol !== -1) sheet.getRange(rowNum, logoCol + 1).setValue(String(team.logo).trim());
+      }
+      var updatedCol = headers.indexOf('updated_at');
+      if (updatedCol !== -1) sheet.getRange(rowNum, updatedCol + 1).setValue(nowStr);
+      return { status: 'success', message: 'Tim berhasil diperbarui.' };
+    }
+  }
+  return { status: 'error', message: 'ID tim tidak ditemukan.' };
+}
+
+function handleDeleteTeam(id) {
+  if (id === 'T-001') {
+    return { status: 'error', message: 'Tim utama PERSIB Bandung tidak dapat dihapus!' };
+  }
+  var ss = getSpreadsheet();
+  var sheet = ss.getSheetByName('teams');
+  var data = sheet.getDataRange().getValues();
+  var idColIdx = data[0].indexOf('id');
+
+  for (var i = 1; i < data.length; i++) {
+    if (String(data[i][idColIdx]) === String(id)) {
+      sheet.deleteRow(i + 1);
+      return { status: 'success', message: 'Tim berhasil dihapus.' };
+    }
+  }
+  return { status: 'error', message: 'ID tim tidak ditemukan.' };
+}
+
+/**
+ * ============================================================================
+ * CRUD STADION & LOKASI (Sheet 'stadiums')
+ * ============================================================================
+ */
+function handleCreateStadium(stadium) {
+  var ss = getSpreadsheet();
+  var sheet = ss.getSheetByName('stadiums');
+  var data = sheet.getDataRange().getValues();
+  var count = data.length;
+  var newId = 'STD-' + String(count).padStart(2, '0');
+  var nowStr = Utilities.formatDate(new Date(), 'Asia/Jakarta', "yyyy-MM-dd'T'HH:mm:ss");
+
+  var name = (stadium.name || 'Stadion Baru').trim();
+  var city = (stadium.city || 'Indonesia').trim();
+
+  var row = [
+    newId,
+    name,
+    city,
+    nowStr,
+    nowStr
+  ];
+  sheet.appendRow(row);
+  return { status: 'success', message: 'Stadion berhasil ditambahkan.', data: { id: newId, name: name, city: city } };
+}
+
+function handleUpdateStadium(id, stadium) {
+  var ss = getSpreadsheet();
+  var sheet = ss.getSheetByName('stadiums');
+  var data = sheet.getDataRange().getValues();
+  var headers = data[0];
+  var idColIdx = headers.indexOf('id');
+  var nowStr = Utilities.formatDate(new Date(), 'Asia/Jakarta', "yyyy-MM-dd'T'HH:mm:ss");
+
+  for (var i = 1; i < data.length; i++) {
+    if (String(data[i][idColIdx]) === String(id)) {
+      var rowNum = i + 1;
+      if (stadium.name !== undefined) {
+        var nameCol = headers.indexOf('name');
+        if (nameCol !== -1) sheet.getRange(rowNum, nameCol + 1).setValue(String(stadium.name).trim());
+      }
+      if (stadium.city !== undefined) {
+        var cityCol = headers.indexOf('city');
+        if (cityCol !== -1) sheet.getRange(rowNum, cityCol + 1).setValue(String(stadium.city).trim());
+      }
+      var updatedCol = headers.indexOf('updated_at');
+      if (updatedCol !== -1) sheet.getRange(rowNum, updatedCol + 1).setValue(nowStr);
+      return { status: 'success', message: 'Stadion berhasil diperbarui.' };
+    }
+  }
+  return { status: 'error', message: 'ID stadion tidak ditemukan.' };
+}
+
+function handleDeleteStadium(id) {
+  var ss = getSpreadsheet();
+  var sheet = ss.getSheetByName('stadiums');
+  var data = sheet.getDataRange().getValues();
+  var idColIdx = data[0].indexOf('id');
+
+  for (var i = 1; i < data.length; i++) {
+    if (String(data[i][idColIdx]) === String(id)) {
+      sheet.deleteRow(i + 1);
+      return { status: 'success', message: 'Stadion berhasil dihapus.' };
+    }
+  }
+  return { status: 'error', message: 'ID stadion tidak ditemukan.' };
+}
+
+/**
+ * ============================================================================
+ * CRUD KOMPETISI & TURNAMEN (Sheet 'competitions')
+ * ============================================================================
+ */
+function handleCreateCompetition(comp) {
+  var ss = getSpreadsheet();
+  var sheet = ss.getSheetByName('competitions');
+  var data = sheet.getDataRange().getValues();
+  var count = data.length;
+  var newId = 'COMP-' + String(count).padStart(2, '0');
+  var nowStr = Utilities.formatDate(new Date(), 'Asia/Jakarta', "yyyy-MM-dd'T'HH:mm:ss");
+
+  var name = (comp.name || 'Kompetisi Baru').trim();
+  var logo = (comp.logo || '').trim() || ('https://placehold.co/100x100/002B7F/ffffff?text=' + encodeURIComponent((comp.code || name).substring(0, 4).toUpperCase()));
+
+  var row = [
+    newId,
+    name,
+    logo,
+    nowStr,
+    nowStr
+  ];
+  sheet.appendRow(row);
+  return { status: 'success', message: 'Kompetisi berhasil ditambahkan.', data: { id: newId, name: name, logo: logo } };
+}
+
+function handleUpdateCompetition(id, comp) {
+  var ss = getSpreadsheet();
+  var sheet = ss.getSheetByName('competitions');
+  var data = sheet.getDataRange().getValues();
+  var headers = data[0];
+  var idColIdx = headers.indexOf('id');
+  var nowStr = Utilities.formatDate(new Date(), 'Asia/Jakarta', "yyyy-MM-dd'T'HH:mm:ss");
+
+  for (var i = 1; i < data.length; i++) {
+    if (String(data[i][idColIdx]) === String(id)) {
+      var rowNum = i + 1;
+      if (comp.name !== undefined) {
+        var nameCol = headers.indexOf('name');
+        if (nameCol !== -1) sheet.getRange(rowNum, nameCol + 1).setValue(String(comp.name).trim());
+      }
+      if (comp.logo !== undefined) {
+        var logoCol = headers.indexOf('logo');
+        if (logoCol !== -1) sheet.getRange(rowNum, logoCol + 1).setValue(String(comp.logo).trim());
+      }
+      var updatedCol = headers.indexOf('updated_at');
+      if (updatedCol !== -1) sheet.getRange(rowNum, updatedCol + 1).setValue(nowStr);
+      return { status: 'success', message: 'Kompetisi berhasil diperbarui.' };
+    }
+  }
+  return { status: 'error', message: 'ID kompetisi tidak ditemukan.' };
+}
+
+function handleDeleteCompetition(id) {
+  var ss = getSpreadsheet();
+  var sheet = ss.getSheetByName('competitions');
+  var data = sheet.getDataRange().getValues();
+  var idColIdx = data[0].indexOf('id');
+
+  for (var i = 1; i < data.length; i++) {
+    if (String(data[i][idColIdx]) === String(id)) {
+      sheet.deleteRow(i + 1);
+      return { status: 'success', message: 'Kompetisi berhasil dihapus.' };
+    }
+  }
+  return { status: 'error', message: 'ID kompetisi tidak ditemukan.' };
 }

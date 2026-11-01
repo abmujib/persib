@@ -247,8 +247,8 @@
               <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
                   <h5 class="fw-bold mb-0 text-dark">Daftar Tim Lawan & Logo</h5>
-                  <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#adminTeamModal">
-                    <i class="bi bi-plus-circle me-1"></i> Tambah Tim
+                  <button class="btn btn-sm btn-primary" onclick="AdminApp.openAddTeamModal()">
+                    <i class="bi bi-plus-circle me-1"></i> Tambah Tim Baru
                   </button>
                 </div>
                 <div class="card-body p-0">
@@ -260,7 +260,8 @@
                           <th style="width: 60px;">Logo</th>
                           <th>Nama Tim</th>
                           <th>Kode Singkat</th>
-                          <th class="text-end" style="width: 80px;">Aksi</th>
+                          <th>ID Referensi</th>
+                          <th class="text-end" style="width: 120px;">Aksi</th>
                         </tr>
                       </thead>
                       <tbody id="adminTeamsTableBody">
@@ -277,8 +278,8 @@
               <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
                   <h5 class="fw-bold mb-0 text-dark">Manajemen Stadion & Lokasi</h5>
-                  <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#adminStadiumModal">
-                    <i class="bi bi-plus-circle me-1"></i> Tambah Stadion
+                  <button class="btn btn-sm btn-primary" onclick="AdminApp.openAddStadiumModal()">
+                    <i class="bi bi-plus-circle me-1"></i> Tambah Stadion Baru
                   </button>
                 </div>
                 <div class="card-body p-0">
@@ -289,7 +290,8 @@
                           <th style="width: 40px;" class="text-center">No</th>
                           <th>Nama Stadion</th>
                           <th>Kota / Lokasi</th>
-                          <th class="text-end" style="width: 80px;">Aksi</th>
+                          <th>ID Referensi</th>
+                          <th class="text-end" style="width: 120px;">Aksi</th>
                         </tr>
                       </thead>
                       <tbody id="adminStadiumsTableBody">
@@ -304,8 +306,11 @@
             <!-- TAB 5: COMPETITIONS PANEL -->
             <div class="admin-view-panel d-none" id="panel_competitions">
               <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white py-3">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
                   <h5 class="fw-bold mb-0 text-dark">Kompetisi Resmi & Turnamen</h5>
+                  <button class="btn btn-sm btn-primary" onclick="AdminApp.openAddCompetitionModal()">
+                    <i class="bi bi-plus-circle me-1"></i> Tambah Kompetisi Baru
+                  </button>
                 </div>
                 <div class="card-body p-0">
                   <div class="table-responsive">
@@ -313,9 +318,11 @@
                       <thead class="table-light">
                         <tr>
                           <th style="width: 40px;" class="text-center">No</th>
+                          <th style="width: 60px;">Logo</th>
                           <th>Nama Kompetisi</th>
                           <th>Kode</th>
                           <th>ID Referensi</th>
+                          <th class="text-end" style="width: 120px;">Aksi</th>
                         </tr>
                       </thead>
                       <tbody id="adminCompetitionsTableBody">
@@ -607,22 +614,23 @@
       </div>
     </div>
 
-    <!-- MODAL: Add Team -->
+    <!-- MODAL: Add/Edit Team -->
     <div class="modal fade modal-persib" id="adminTeamModal" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <form id="adminTeamForm">
             <div class="modal-header">
-              <h5 class="modal-title fs-6 fw-bold text-white">Tambah Tim Lawan Baru</h5>
+              <h5 class="modal-title fs-6 fw-bold text-white" id="adminTeamModalTitle">Tambah Tim Lawan Baru</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-4">
+              <input type="hidden" id="teamEditId" value="" />
               <div class="mb-3">
                 <label class="form-label fw-semibold small">Nama Tim *</label>
                 <input type="text" class="form-control form-control-sm" id="teamNameInput" placeholder="Contoh: Semen Padang FC" required />
               </div>
               <div class="mb-3">
-                <label class="form-label fw-semibold small">Kode Singkat (3-4 Huruf)</label>
+                <label class="form-label fw-semibold small">Kode Singkat (3-5 Huruf)</label>
                 <input type="text" class="form-control form-control-sm text-uppercase" id="teamCodeInput" placeholder="Contoh: SPFC" maxlength="5" />
               </div>
               <div class="mb-3">
@@ -633,23 +641,26 @@
             </div>
             <div class="modal-footer bg-light py-2">
               <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Batal</button>
-              <button type="submit" class="btn btn-sm btn-primary">Simpan Tim</button>
+              <button type="submit" class="btn btn-sm btn-primary">
+                <i class="bi bi-save me-1"></i> Simpan Tim
+              </button>
             </div>
           </form>
         </div>
       </div>
     </div>
 
-    <!-- MODAL: Add Stadium -->
+    <!-- MODAL: Add/Edit Stadium -->
     <div class="modal fade modal-persib" id="adminStadiumModal" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <form id="adminStadiumForm">
             <div class="modal-header">
-              <h5 class="modal-title fs-6 fw-bold text-white">Tambah Stadion Baru</h5>
+              <h5 class="modal-title fs-6 fw-bold text-white" id="adminStadiumModalTitle">Tambah Stadion Baru</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-4">
+              <input type="hidden" id="stadiumEditId" value="" />
               <div class="mb-3">
                 <label class="form-label fw-semibold small">Nama Stadion *</label>
                 <input type="text" class="form-control form-control-sm" id="stadiumNameInput" placeholder="Contoh: Stadion Maguwoharjo" required />
@@ -661,7 +672,45 @@
             </div>
             <div class="modal-footer bg-light py-2">
               <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Batal</button>
-              <button type="submit" class="btn btn-sm btn-primary">Simpan Stadion</button>
+              <button type="submit" class="btn btn-sm btn-primary">
+                <i class="bi bi-save me-1"></i> Simpan Stadion
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: Add/Edit Competition -->
+    <div class="modal fade modal-persib" id="adminCompetitionModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <form id="adminCompetitionForm">
+            <div class="modal-header">
+              <h5 class="modal-title fs-6 fw-bold text-white" id="adminCompModalTitle">Tambah Kompetisi Baru</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+              <input type="hidden" id="compEditId" value="" />
+              <div class="mb-3">
+                <label class="form-label fw-semibold small">Nama Kompetisi *</label>
+                <input type="text" class="form-control form-control-sm" id="compNameInput" placeholder="Contoh: BRI Liga 1 Indonesia" required />
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-semibold small">Kode Singkat (3-6 Karakter)</label>
+                <input type="text" class="form-control form-control-sm text-uppercase" id="compCodeInput" placeholder="Contoh: LIGA1" maxlength="6" />
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-semibold small">URL Logo Kompetisi (Opsional)</label>
+                <input type="url" class="form-control form-control-sm" id="compLogoInput" placeholder="https://..." />
+                <div class="form-text small">Kosongkan jika ingin menggunakan badge inisial otomatis.</div>
+              </div>
+            </div>
+            <div class="modal-footer bg-light py-2">
+              <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Batal</button>
+              <button type="submit" class="btn btn-sm btn-primary">
+                <i class="bi bi-save me-1"></i> Simpan Kompetisi
+              </button>
             </div>
           </form>
         </div>

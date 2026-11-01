@@ -626,18 +626,24 @@ const ApiService = (function() {
 
   // Create Match
   async function createMatch(matchData) {
+    let remoteSuccess = false;
+    let remoteMatchId = null;
+
     if (CONFIG.GAS_API_URL) {
       try {
         const token = sessionStorage.getItem(CONFIG.STORAGE_KEYS.AUTH_TOKEN);
         const res = await callGas('create_match', { match: matchData, token }, 'POST');
-        if (res.status === 'success') return { success: true, match: res.data };
+        if (res.status === 'success') {
+          remoteSuccess = true;
+          remoteMatchId = res.data && res.data.id ? res.data.id : null;
+        }
       } catch (e) {
-        console.warn('GAS create_match failed:', e);
+        console.warn('GAS create_match failed, continuing with local persistence:', e);
       }
     }
 
     const db = getLocalDb();
-    const id = 'MATCH-' + String(db.matches.length + 1).padStart(3, '0') + '-' + Math.random().toString(36).substring(2, 5);
+    const id = remoteMatchId || ('MATCH-' + String(db.matches.length + 1).padStart(3, '0') + '-' + Math.random().toString(36).substring(2, 5));
     const newMatch = {
       id,
       external_match_id: matchData.external_match_id || ('MANUAL-' + Date.now()),
@@ -647,11 +653,11 @@ const ApiService = (function() {
       season_id: matchData.season_id || 'SEAS-2024-2025',
       stadium_id: matchData.stadium_id,
       match_date: matchData.match_date,
-      match_time: matchData.match_time,
-      home_score: matchData.home_score !== '' && matchData.home_score !== null ? Number(matchData.home_score) : null,
-      away_score: matchData.away_score !== '' && matchData.away_score !== null ? Number(matchData.away_score) : null,
+      match_time: matchData.match_time || '19:00',
+      home_score: matchData.home_score !== '' && matchData.home_score !== null && matchData.home_score !== undefined ? Number(matchData.home_score) : null,
+      away_score: matchData.away_score !== '' && matchData.away_score !== null && matchData.away_score !== undefined ? Number(matchData.away_score) : null,
       status: matchData.status || 'SCHEDULED',
-      data_source: 'Manual Input',
+      data_source: matchData.data_source || 'Manual Input',
       referee: matchData.referee || '-',
       broadcast: matchData.broadcast || '-',
       notes: matchData.notes || '',
@@ -661,18 +667,19 @@ const ApiService = (function() {
 
     db.matches.push(newMatch);
     saveLocalDb(db);
-    return { success: true, match: newMatch };
+    return { success: true, match: newMatch, remote: remoteSuccess };
   }
 
   // Update Match
   async function updateMatch(matchId, matchData) {
+    let remoteSuccess = false;
     if (CONFIG.GAS_API_URL) {
       try {
         const token = sessionStorage.getItem(CONFIG.STORAGE_KEYS.AUTH_TOKEN);
         const res = await callGas('update_match', { id: matchId, match: matchData, token }, 'POST');
-        if (res.status === 'success') return { success: true, match: res.data };
+        if (res.status === 'success') remoteSuccess = true;
       } catch (e) {
-        console.warn('GAS update_match failed:', e);
+        console.warn('GAS update_match failed, updating local database:', e);
       }
     }
 
@@ -683,16 +690,19 @@ const ApiService = (function() {
     }
 
     const existing = db.matches[index];
+    const cleanHomeScore = matchData.home_score !== '' && matchData.home_score !== null && matchData.home_score !== undefined ? Number(matchData.home_score) : null;
+    const cleanAwayScore = matchData.away_score !== '' && matchData.away_score !== null && matchData.away_score !== undefined ? Number(matchData.away_score) : null;
+
     db.matches[index] = {
       ...existing,
       ...matchData,
       id: existing.id,
-      home_score: matchData.home_score !== '' && matchData.home_score !== null ? Number(matchData.home_score) : null,
-      away_score: matchData.away_score !== '' && matchData.away_score !== null ? Number(matchData.away_score) : null,
+      home_score: cleanHomeScore,
+      away_score: cleanAwayScore,
       updated_at: new Date().toISOString()
     };
     saveLocalDb(db);
-    return { success: true, match: db.matches[index] };
+    return { success: true, match: db.matches[index], remote: remoteSuccess };
   }
 
   // Quick Score & Status Updater
@@ -706,11 +716,12 @@ const ApiService = (function() {
 
   // Delete Match
   async function deleteMatch(matchId) {
+    let remoteSuccess = false;
     if (CONFIG.GAS_API_URL) {
       try {
         const token = sessionStorage.getItem(CONFIG.STORAGE_KEYS.AUTH_TOKEN);
         const res = await callGas('delete_match', { id: matchId, token }, 'POST');
-        if (res.status === 'success') return { success: true };
+        if (res.status === 'success') remoteSuccess = true;
       } catch (e) {
         console.warn('GAS delete_match failed:', e);
       }
@@ -719,80 +730,233 @@ const ApiService = (function() {
     const db = getLocalDb();
     const initialLen = db.matches.length;
     db.matches = db.matches.filter(m => m.id !== matchId);
-    if (db.matches.length === initialLen) {
+    if (db.matches.length === initialLen && !remoteSuccess) {
       return { success: false, message: 'Pertandingan tidak ditemukan' };
     }
     saveLocalDb(db);
-    return { success: true };
+    return { success: true, remote: remoteSuccess };
   }
 
   // Teams CRUD
   async function createTeam(teamData) {
+    let remoteSuccess = false;
+    let remoteTeamId = null;
+
+    if (CONFIG.GAS_API_URL) {
+      try {
+        const token = sessionStorage.getItem(CONFIG.STORAGE_KEYS.AUTH_TOKEN);
+        const res = await callGas('create_team', { team: teamData, token }, 'POST');
+        if (res.status === 'success') {
+          remoteSuccess = true;
+          if (res.data && res.data.id) remoteTeamId = res.data.id;
+        }
+      } catch (e) {
+        console.warn('GAS create_team failed, local fallback:', e);
+      }
+    }
+
     const db = getLocalDb();
-    const id = 'T-' + String(db.teams.length + 1).padStart(3, '0');
+    const id = remoteTeamId || ('T-' + String(db.teams.length + 1).padStart(3, '0'));
     const newTeam = {
       id,
       name: teamData.name,
       code: teamData.code || teamData.name.substring(0, 4).toUpperCase(),
       logo: teamData.logo || 'https://placehold.co/100x100/002B7F/ffffff?text=' + encodeURIComponent(teamData.name.substring(0, 3)),
       is_persib: false,
-      created_at: new Date().toISOString()
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
     };
     db.teams.push(newTeam);
     saveLocalDb(db);
-    return { success: true, data: newTeam };
+    return { success: true, data: newTeam, remote: remoteSuccess };
   }
 
   async function updateTeam(teamId, teamData) {
+    let remoteSuccess = false;
+    if (CONFIG.GAS_API_URL) {
+      try {
+        const token = sessionStorage.getItem(CONFIG.STORAGE_KEYS.AUTH_TOKEN);
+        const res = await callGas('update_team', { id: teamId, team: teamData, token }, 'POST');
+        if (res.status === 'success') remoteSuccess = true;
+      } catch (e) {
+        console.warn('GAS update_team failed:', e);
+      }
+    }
+
     const db = getLocalDb();
     const index = db.teams.findIndex(t => t.id === teamId);
-    if (index === -1) return { success: false, message: 'Tim tidak ditemukan' };
-    db.teams[index] = { ...db.teams[index], ...teamData, updated_at: new Date().toISOString() };
-    saveLocalDb(db);
-    return { success: true, data: db.teams[index] };
+    if (index === -1 && !remoteSuccess) return { success: false, message: 'Tim tidak ditemukan' };
+    if (index !== -1) {
+      db.teams[index] = { ...db.teams[index], ...teamData, updated_at: new Date().toISOString() };
+      saveLocalDb(db);
+    }
+    return { success: true, data: index !== -1 ? db.teams[index] : { id: teamId, ...teamData }, remote: remoteSuccess };
   }
 
   async function deleteTeam(teamId) {
+    if (teamId === 'T-001') {
+      return { success: false, message: 'Tim utama PERSIB Bandung tidak boleh dihapus!' };
+    }
+    let remoteSuccess = false;
+    if (CONFIG.GAS_API_URL) {
+      try {
+        const token = sessionStorage.getItem(CONFIG.STORAGE_KEYS.AUTH_TOKEN);
+        const res = await callGas('delete_team', { id: teamId, token }, 'POST');
+        if (res.status === 'success') remoteSuccess = true;
+      } catch (e) {
+        console.warn('GAS delete_team failed:', e);
+      }
+    }
+
     const db = getLocalDb();
     db.teams = db.teams.filter(t => t.id !== teamId);
     saveLocalDb(db);
-    return { success: true };
+    return { success: true, remote: remoteSuccess };
   }
 
   // Stadiums CRUD
   async function createStadium(stadiumData) {
+    let remoteSuccess = false;
+    let remoteStadiumId = null;
+
+    if (CONFIG.GAS_API_URL) {
+      try {
+        const token = sessionStorage.getItem(CONFIG.STORAGE_KEYS.AUTH_TOKEN);
+        const res = await callGas('create_stadium', { stadium: stadiumData, token }, 'POST');
+        if (res.status === 'success') {
+          remoteSuccess = true;
+          if (res.data && res.data.id) remoteStadiumId = res.data.id;
+        }
+      } catch (e) {
+        console.warn('GAS create_stadium failed:', e);
+      }
+    }
+
     const db = getLocalDb();
-    const id = 'STD-' + String(db.stadiums.length + 1).padStart(2, '0');
-    const item = { id, name: stadiumData.name, city: stadiumData.city, created_at: new Date().toISOString() };
+    const id = remoteStadiumId || ('STD-' + String(db.stadiums.length + 1).padStart(2, '0'));
+    const item = { 
+      id, 
+      name: stadiumData.name, 
+      city: stadiumData.city, 
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
     db.stadiums.push(item);
     saveLocalDb(db);
-    return { success: true, data: item };
+    return { success: true, data: item, remote: remoteSuccess };
   }
 
   async function updateStadium(stadiumId, stadiumData) {
+    let remoteSuccess = false;
+    if (CONFIG.GAS_API_URL) {
+      try {
+        const token = sessionStorage.getItem(CONFIG.STORAGE_KEYS.AUTH_TOKEN);
+        const res = await callGas('update_stadium', { id: stadiumId, stadium: stadiumData, token }, 'POST');
+        if (res.status === 'success') remoteSuccess = true;
+      } catch (e) {
+        console.warn('GAS update_stadium failed:', e);
+      }
+    }
+
     const db = getLocalDb();
     const index = db.stadiums.findIndex(s => s.id === stadiumId);
-    if (index === -1) return { success: false, message: 'Stadion tidak ditemukan' };
-    db.stadiums[index] = { ...db.stadiums[index], ...stadiumData, updated_at: new Date().toISOString() };
-    saveLocalDb(db);
-    return { success: true, data: db.stadiums[index] };
+    if (index === -1 && !remoteSuccess) return { success: false, message: 'Stadion tidak ditemukan' };
+    if (index !== -1) {
+      db.stadiums[index] = { ...db.stadiums[index], ...stadiumData, updated_at: new Date().toISOString() };
+      saveLocalDb(db);
+    }
+    return { success: true, data: index !== -1 ? db.stadiums[index] : { id: stadiumId, ...stadiumData }, remote: remoteSuccess };
   }
 
   async function deleteStadium(stadiumId) {
+    let remoteSuccess = false;
+    if (CONFIG.GAS_API_URL) {
+      try {
+        const token = sessionStorage.getItem(CONFIG.STORAGE_KEYS.AUTH_TOKEN);
+        const res = await callGas('delete_stadium', { id: stadiumId, token }, 'POST');
+        if (res.status === 'success') remoteSuccess = true;
+      } catch (e) {
+        console.warn('GAS delete_stadium failed:', e);
+      }
+    }
+
     const db = getLocalDb();
     db.stadiums = db.stadiums.filter(s => s.id !== stadiumId);
     saveLocalDb(db);
-    return { success: true };
+    return { success: true, remote: remoteSuccess };
   }
 
   // Competitions CRUD
   async function createCompetition(compData) {
+    let remoteSuccess = false;
+    let remoteCompId = null;
+
+    if (CONFIG.GAS_API_URL) {
+      try {
+        const token = sessionStorage.getItem(CONFIG.STORAGE_KEYS.AUTH_TOKEN);
+        const res = await callGas('create_competition', { competition: compData, token }, 'POST');
+        if (res.status === 'success') {
+          remoteSuccess = true;
+          if (res.data && res.data.id) remoteCompId = res.data.id;
+        }
+      } catch (e) {
+        console.warn('GAS create_competition failed:', e);
+      }
+    }
+
     const db = getLocalDb();
-    const id = 'COMP-' + String(db.competitions.length + 1).padStart(2, '0');
-    const item = { id, name: compData.name, code: compData.code, logo: compData.logo, created_at: new Date().toISOString() };
+    const id = remoteCompId || ('COMP-' + String(db.competitions.length + 1).padStart(2, '0'));
+    const item = { 
+      id, 
+      name: compData.name, 
+      code: compData.code || compData.name.substring(0, 4).toUpperCase(), 
+      logo: compData.logo || 'https://placehold.co/100x100/002B7F/ffffff?text=' + encodeURIComponent((compData.code || compData.name).substring(0, 4).toUpperCase()), 
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
     db.competitions.push(item);
     saveLocalDb(db);
-    return { success: true, data: item };
+    return { success: true, data: item, remote: remoteSuccess };
+  }
+
+  async function updateCompetition(compId, compData) {
+    let remoteSuccess = false;
+    if (CONFIG.GAS_API_URL) {
+      try {
+        const token = sessionStorage.getItem(CONFIG.STORAGE_KEYS.AUTH_TOKEN);
+        const res = await callGas('update_competition', { id: compId, competition: compData, token }, 'POST');
+        if (res.status === 'success') remoteSuccess = true;
+      } catch (e) {
+        console.warn('GAS update_competition failed:', e);
+      }
+    }
+
+    const db = getLocalDb();
+    const index = db.competitions.findIndex(c => c.id === compId);
+    if (index === -1 && !remoteSuccess) return { success: false, message: 'Kompetisi tidak ditemukan' };
+    if (index !== -1) {
+      db.competitions[index] = { ...db.competitions[index], ...compData, updated_at: new Date().toISOString() };
+      saveLocalDb(db);
+    }
+    return { success: true, data: index !== -1 ? db.competitions[index] : { id: compId, ...compData }, remote: remoteSuccess };
+  }
+
+  async function deleteCompetition(compId) {
+    let remoteSuccess = false;
+    if (CONFIG.GAS_API_URL) {
+      try {
+        const token = sessionStorage.getItem(CONFIG.STORAGE_KEYS.AUTH_TOKEN);
+        const res = await callGas('delete_competition', { id: compId, token }, 'POST');
+        if (res.status === 'success') remoteSuccess = true;
+      } catch (e) {
+        console.warn('GAS delete_competition failed:', e);
+      }
+    }
+
+    const db = getLocalDb();
+    db.competitions = db.competitions.filter(c => c.id !== compId);
+    saveLocalDb(db);
+    return { success: true, remote: remoteSuccess };
   }
 
   // Football API Sync & Settings
@@ -930,6 +1094,8 @@ const ApiService = (function() {
     updateStadium,
     deleteStadium,
     createCompetition,
+    updateCompetition,
+    deleteCompetition,
     getApiSettings,
     updateApiSettings,
     getSyncLogs,

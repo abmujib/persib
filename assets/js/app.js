@@ -176,6 +176,13 @@ const App = (function() {
     document.getElementById('statCleanSheet').textContent = stats.cleanSheets ?? 0;
   }
 
+  function formatMatchTime(timeStr) {
+    if (!timeStr || String(timeStr).includes('1899') || String(timeStr).includes('-') || timeStr === '00:00') {
+      return '19:00';
+    }
+    return String(timeStr).trim();
+  }
+
   // Next Match Live Countdown Setup
   function setupNextMatchCountdown() {
     if (countdownInterval) clearInterval(countdownInterval);
@@ -183,11 +190,14 @@ const App = (function() {
     // Find the next upcoming match (SCHEDULED or LIVE) with date >= today
     const now = new Date();
     const upcomingMatches = allMatches.filter(m => {
-      const matchDate = new Date(`${m.match_date}T${m.match_time || '19:00'}:00+07:00`);
+      const cleanTime = formatMatchTime(m.match_time);
+      const matchDate = new Date(`${m.match_date}T${cleanTime}:00+07:00`);
       return m.status === 'SCHEDULED' || m.status === 'TIMED' || m.status === 'LIVE';
     }).sort((a, b) => {
-      const dateA = new Date(`${a.match_date}T${a.match_time || '19:00'}:00+07:00`);
-      const dateB = new Date(`${b.match_date}T${b.match_time || '19:00'}:00+07:00`);
+      const timeA = formatMatchTime(a.match_time);
+      const timeB = formatMatchTime(b.match_time);
+      const dateA = new Date(`${a.match_date}T${timeA}:00+07:00`);
+      const dateB = new Date(`${b.match_date}T${timeB}:00+07:00`);
       return dateA - dateB;
     });
 
@@ -219,6 +229,8 @@ const App = (function() {
       year: 'numeric'
     }).format(d);
 
+    const matchTimeWib = formatMatchTime(nextMatch.match_time);
+
     container.innerHTML = `
       <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
         <div class="next-match-kicker">
@@ -241,7 +253,7 @@ const App = (function() {
         <!-- Center VS / Score -->
         <div class="col-2">
           <span class="vs-badge">VS</span>
-          <div class="mt-2 text-warning fw-bold small">${nextMatch.match_time || '19:00'} WIB</div>
+          <div class="mt-2 text-warning fw-bold small">${matchTimeWib} WIB</div>
         </div>
 
         <!-- Away Team -->
@@ -395,7 +407,7 @@ const App = (function() {
       } else if (isLive) {
         scoreDisplay = `<div class="match-score-pill text-danger border-danger">${m.home_score ?? 0} - ${m.away_score ?? 0}</div>`;
       } else {
-        scoreDisplay = `<div class="match-time-pill">${m.match_time || '19:00'} WIB</div>`;
+        scoreDisplay = `<div class="match-time-pill">${formatMatchTime(m.match_time)} WIB</div>`;
       }
 
       return `
