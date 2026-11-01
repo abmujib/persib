@@ -232,3 +232,17 @@ function handleSimulatedVerifiedSync(syncType, customMsg) {
     message: customMsg
   };
 }
+
+/**
+ * HELPER: Simpan FOOTBALL_API_KEY ke Script Properties
+ * Anda bisa menjalankan fungsi ini sekali di Apps Script untuk menyimpan API Key.
+ */
+function setFootballApiKey(apiKey) {
+  var key = apiKey || "MASUKKAN_API_KEY_ANDA_DISINI";
+  if (key === "MASUKKAN_API_KEY_ANDA_DISINI") {
+    Logger.log("Peringatan: Ganti 'MASUKKAN_API_KEY_ANDA_DISINI' dengan token API Anda terlebih dahulu.");
+    return;
+  }
+  PropertiesService.getScriptProperties().setProperty('FOOTBALL_API_KEY', key.trim());
+  Logger.log("SUKSES: FOOTBALL_API_KEY berhasil disimpan di Script Properties!");
+}
