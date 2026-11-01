@@ -48,6 +48,9 @@
             <button class="nav-link-custom border-0 bg-transparent text-white" id="openPrintModalBtn">
               <i class="bi bi-printer"></i> Cetak Jadwal (A4/PDF)
             </button>
+            <button class="nav-link-custom border-0 bg-transparent text-white" data-bs-toggle="modal" data-bs-target="#apiDocsModal">
+              <i class="bi bi-code-slash text-warning me-1"></i> REST API JSON
+            </button>
           </nav>
 
           <!-- Zone 3: Primary Action (Admin Portal) -->
@@ -346,6 +349,87 @@
             <button type="button" class="btn btn-sm btn-primary" id="executePrintBtn">
               <i class="bi bi-printer me-1"></i> Mulai Cetak / Simpan PDF
             </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: API Documentation JSON -->
+    <div class="modal fade modal-persib" id="apiDocsModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-dark text-white">
+            <h5 class="modal-title fs-6 fw-bold">
+              <i class="bi bi-code-slash text-warning me-2"></i>REST API JSON Jadwal & Skor PERSIB (/api/v1/)
+            </h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body p-4">
+            <p class="small text-muted mb-3">
+              Endpoint JSON resmi untuk konsumsi data pertandingan, hasil skor akhir, jadwal mendatang, dan statistik klub PERSIB Bandung. Mendukung CORS dan format waktu WIB (Asia/Jakarta).
+            </p>
+            <div class="list-group list-group-flush mb-3">
+              <div class="list-group-item px-0 py-2">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                  <span class="badge bg-primary me-2">GET</span>
+                  <a href="./api/v1/matches" target="_blank" class="fw-bold font-monospace text-decoration-none">/api/v1/matches</a>
+                </div>
+                <div class="small text-muted">Seluruh jadwal &amp; hasil pertandingan PERSIB lengkap dengan tim lawan, logo, dan skor.</div>
+              </div>
+              <div class="list-group-item px-0 py-2">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                  <span class="badge bg-success me-2">GET</span>
+                  <a href="./api/v1/schedule" target="_blank" class="fw-bold font-monospace text-decoration-none">/api/v1/schedule</a>
+                </div>
+                <div class="small text-muted">Jadwal pertandingan mendatang beserta hitung mundur (countdown) kick-off.</div>
+              </div>
+              <div class="list-group-item px-0 py-2">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                  <span class="badge bg-info text-dark me-2">GET</span>
+                  <a href="./api/v1/scores" target="_blank" class="fw-bold font-monospace text-decoration-none">/api/v1/scores</a>
+                </div>
+                <div class="small text-muted">Hasil skor pertandingan yang telah selesai (Finished) beserta detail pencapaian poin.</div>
+              </div>
+              <div class="list-group-item px-0 py-2">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                  <span class="badge bg-warning text-dark me-2">GET</span>
+                  <a href="./api/v1/next-match" target="_blank" class="fw-bold font-monospace text-decoration-none">/api/v1/next-match</a>
+                </div>
+                <div class="small text-muted">Pertandingan terdekat berikutnya yang akan dihadapi PERSIB Bandung.</div>
+              </div>
+              <div class="list-group-item px-0 py-2">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                  <span class="badge bg-secondary me-2">GET</span>
+                  <a href="./api/v1/stats" target="_blank" class="fw-bold font-monospace text-decoration-none">/api/v1/stats</a>
+                </div>
+                <div class="small text-muted">Statistik lengkap performa (Main, Menang, Seri, Kalah, Gol GF:GA, Poin, Win Rate, Form).</div>
+              </div>
+            </div>
+            <div class="alert alert-light border small text-muted mb-0">
+              <i class="bi bi-info-circle-fill me-1 text-primary"></i> <strong>Contoh Respons JSON:</strong>
+              <pre class="bg-dark text-warning p-2 rounded mt-2 mb-0 font-monospace overflow-auto" style="max-height: 180px;">{
+  "status": "success",
+  "meta": { "api_version": "1.0.0", "club": "PERSIB Bandung", "timezone": "Asia/Jakarta (WIB)" },
+  "data": [
+    {
+      "id": "MATCH-005",
+      "match_date": "2026-11-04",
+      "match_time": "15:30",
+      "formatted_date": "Rabu, 4 November 2026",
+      "home_team": { "id": "T-001", "name": "PERSIB Bandung" },
+      "away_team": { "id": "T-002", "name": "Persija Jakarta" },
+      "status": "SCHEDULED",
+      "status_label": "Terjadwal"
+    }
+  ]
+}</pre>
+            </div>
+          </div>
+          <div class="modal-footer bg-light py-2">
+            <a href="./api/v1/" target="_blank" class="btn btn-sm btn-primary">
+              <i class="bi bi-box-arrow-up-right me-1"></i> Buka Index API v1
+            </a>
+            <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Tutup</button>
           </div>
         </div>
       </div>
