@@ -332,21 +332,27 @@
               <div class="row g-4">
                 <div class="col-lg-7">
                   <div class="card border-0 shadow-sm p-4">
-                    <h5 class="fw-bold mb-3"><i class="bi bi-sliders me-2 text-primary"></i>Pengaturan Football API Provider</h5>
+                    <h5 class="fw-bold mb-3"><i class="bi bi-sliders me-2 text-primary"></i>Pengaturan API-Football (api-football.com)</h5>
                     
                     <div class="mb-3">
                       <label class="form-label fw-semibold small">Penyedia API (Provider):</label>
                       <select class="form-select form-select-sm" id="syncProviderSelect">
-                        <option value="Football-Data.org">Football-Data.org (Rekomendasi Utama)</option>
-                        <option value="API-Football">API-Football (RapidAPI)</option>
-                        <option value="Custom">Custom Provider</option>
+                        <option value="api-football.com" selected>API-Football (api-football.com / API-Sports) - Rekomendasi Utama</option>
+                        <option value="RapidAPI">API-Football via RapidAPI</option>
                       </select>
                     </div>
 
-                    <div class="mb-3">
-                      <label class="form-label fw-semibold small">Kode Liga / Kompetisi:</label>
-                      <input type="text" class="form-control form-control-sm" id="syncLeagueCode" value="IDN1" />
-                      <div class="form-text small">Kode kompetisi Liga 1 Indonesia pada feed penyedia data.</div>
+                    <div class="row g-2 mb-3">
+                      <div class="col-6">
+                        <label class="form-label fw-semibold small">Team ID PERSIB:</label>
+                        <input type="text" class="form-control form-control-sm font-monospace" id="syncTeamId" value="854" readonly />
+                        <div class="form-text small" style="font-size:0.7rem;">ID Resmi PERSIB Bandung di API-Football adalah <strong>854</strong>.</div>
+                      </div>
+                      <div class="col-6">
+                        <label class="form-label fw-semibold small">Musim Kompetisi:</label>
+                        <input type="text" class="form-control form-control-sm font-monospace" id="syncSeason" value="2024" />
+                        <div class="form-text small" style="font-size:0.7rem;">Gunakan tahun mulai musim (contoh: <code>2024</code> untuk 2024/2025).</div>
+                      </div>
                     </div>
 
                     <div class="mb-3">
@@ -357,15 +363,15 @@
                       </div>
                     </div>
 
-                    <div class="p-3 bg-light rounded border mb-4">
-                      <strong class="d-block mb-1 small text-dark"><i class="bi bi-shield-lock me-1"></i>Keamanan API Key:</strong>
+                    <div class="p-3 bg-light rounded border mb-3">
+                      <strong class="d-block mb-1 small text-dark"><i class="bi bi-key-fill text-warning me-1"></i>Penyimpanan API Key (api-football.com):</strong>
                       <p class="small text-muted mb-0">
-                        Sesuai standar keamanan sistem, API Key tidak disimpan di frontend publik, melainkan disimpan dengan aman di <strong>Script Properties</strong> Google Apps Script (Key: <code>FOOTBALL_API_KEY</code>).
+                        Demi keamanan, API Key disimpan di <strong>Script Properties</strong> Google Apps Script (Property: <code>FOOTBALL_API_KEY</code>). Anda juga dapat menjalankan fungsi <code>setFootballApiKey()</code> di editor Apps Script.
                       </p>
                     </div>
 
-                    <button type="button" class="btn btn-primary btn-sm px-3" onclick="alert('Pengaturan API berhasil diperbarui!')">
-                      <i class="bi bi-save me-1"></i> Simpan Pengaturan API
+                    <button type="button" class="btn btn-primary btn-sm px-3" onclick="alert('Pengaturan API-Football telah disimpan!')">
+                      <i class="bi bi-save me-1"></i> Simpan Pengaturan
                     </button>
                   </div>
                 </div>

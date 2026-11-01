@@ -1,75 +1,99 @@
 /**
  * ============================================================================
- * PERSIB BANDUNG - FOOTBALL API INTEGRATION & AUTOMATIC SYNC
+ * PERSIB BANDUNG - API-FOOTBALL (api-football.com / API-SPORTS) INTEGRATION
  * File: football-api.gs
  * ============================================================================
  * 
  * Modul ini menangani:
- * 1. Pengambilan jadwal resmi dan pembaruan skor dari Football API feed.
- * 2. Pencegahan duplikasi data menggunakan external_match_id.
- * 3. Penyimpanan API Key secara aman di Google Apps Script Properties.
- * 4. Pemasangan Google Apps Script Time-Driven Trigger otomatis.
- * 5. Pencatatan log sinkronisasi di sheet sync_logs.
- * 6. Penanganan error, batas kuota, dan fallback data manual.
+ * 1. Pengambilan seluruh jadwal, skor, dan status pertandingan PERSIB Bandung
+ *    langsung dari API-Football (v3.football.api-sports.io).
+ * 2. Team ID resmi PERSIB di API-Football: 854
+ * 3. League ID Liga 1 Indonesia di API-Football: 279
+ * 4. Mendukung seluruh kompetisi PERSIB (Liga 1, AFC Champions League Two, dll).
+ * 5. Pencegahan duplikasi data menggunakan external_match_id.
+ * 6. Pembaruan tim lawan, logo resmi, dan stadion secara otomatis.
+ * 7. Penyimpanan API Key di Script Properties (FOOTBALL_API_KEY).
+ * 8. Trigger otomatis berkala setiap 6 jam (setupSyncTrigger).
  */
 
 /**
- * Menjalankan Sinkronisasi Football API
+ * Menjalankan Sinkronisasi API-Football
  * @param {string} triggerSource - 'AUTOMATIC_TRIGGER' | 'MANUAL_ADMIN'
  */
 function runFootballApiSync(triggerSource) {
   var src = triggerSource || 'AUTOMATIC_TRIGGER';
   var props = PropertiesService.getScriptProperties();
-  var apiKey = props.getProperty('FOOTBALL_API_KEY');
-  var provider = props.getProperty('FOOTBALL_API_PROVIDER') || 'Football-Data.org';
-  var leagueCode = props.getProperty('FOOTBALL_LEAGUE_CODE') || 'IDN1';
+  
+  // Ambil konfigurasi dari Script Properties
+  var apiKey = props.getProperty('FOOTBALL_API_KEY') || props.getProperty('API_FOOTBALL_KEY');
+  var teamId = props.getProperty('PERSIB_TEAM_ID') || '854'; // 854 = Persib Bandung di API-Football
+  var season = props.getProperty('FOOTBALL_SEASON') || '2024'; // API-Football menggunakan 4-digit tahun mulai musim
+  var isRapidApi = (props.getProperty('FOOTBALL_API_PROVIDER') || '').toLowerCase().indexOf('rapidapi') !== -1;
 
   var logMessage = '';
   var processedRecords = 0;
   var status = 'SUCCESS';
 
   try {
-    if (!apiKey) {
-      // Jika API Key belum diset di Properties, lakukan sinkronisasi data simulasi terverifikasi
+    if (!apiKey || apiKey.trim() === '') {
       Logger.log('Catatan: FOOTBALL_API_KEY belum dikonfigurasi di Script Properties.');
-      return handleSimulatedVerifiedSync(src, 'Sinkronisasi berjalan dengan data jadwal resmi PERSIB terverifikasi (FOOTBALL_API_KEY belum diset di Script Properties).');
+      return handleSimulatedVerifiedSync(src, 'Sinkronisasi berjalan dalam mode simulasi terverifikasi. Untuk live feed, atur FOOTBALL_API_KEY di Script Properties.');
     }
 
-    // Panggil Endpoint Resmi Football-Data.org
-    var url = 'https://api.football-data.org/v4/competitions/' + encodeURIComponent(leagueCode) + '/matches';
+    // Tentukan URL & Header berdasarkan jenis akun (Direct API-Sports atau RapidAPI)
+    var url = '';
+    var headers = {};
+
+    if (isRapidApi) {
+      url = 'https://api-football-v1.p.rapidapi.com/v3/fixtures?team=' + encodeURIComponent(teamId) + '&season=' + encodeURIComponent(season);
+      headers = {
+        'x-rapidapi-key': apiKey.trim(),
+        'x-rapidapi-host': 'api-football-v1.p.rapidapi.com'
+      };
+    } else {
+      // Direct API-Sports (api-football.com)
+      url = 'https://v3.football.api-sports.io/fixtures?team=' + encodeURIComponent(teamId) + '&season=' + encodeURIComponent(season);
+      headers = {
+        'x-apisports-key': apiKey.trim()
+      };
+    }
+
     var options = {
       method: 'get',
-      headers: {
-        'X-Auth-Token': apiKey
-      },
+      headers: headers,
       muteHttpExceptions: true
     };
 
+    Logger.log('Memanggil API-Football: ' + url);
     var response = UrlFetchApp.fetch(url, options);
     var statusCode = response.getResponseCode();
+    var responseText = response.getContentText();
 
     if (statusCode === 429) {
-      throw new Error('Batas kuota Football API (Rate Limit) tercapai. Silakan coba beberapa saat lagi.');
+      throw new Error('Batas kuota harian/menit API-Football tercapai (Rate Limit).');
     } else if (statusCode !== 200) {
-      throw new Error('Gagal menghubungi Football API. Kode status HTTP: ' + statusCode + '. ' + response.getContentText());
+      throw new Error('Gagal menghubungi API-Football (HTTP ' + statusCode + '): ' + responseText);
     }
 
-    var json = JSON.parse(response.getContentText());
-    var matchesFromApi = json.matches || [];
+    var json = JSON.parse(responseText);
 
-    // Filter pertandingan yang melibatkan PERSIB
-    var persibMatches = matchesFromApi.filter(function(m) {
-      var home = (m.homeTeam && m.homeTeam.name) ? m.homeTeam.name.toLowerCase() : '';
-      var away = (m.awayTeam && m.awayTeam.name) ? m.awayTeam.name.toLowerCase() : '';
-      return home.indexOf('persib') !== -1 || away.indexOf('persib') !== -1;
-    });
+    // Periksa apakah ada error di dalam body respon API-Football
+    if (json.errors && Object.keys(json.errors).length > 0) {
+      var errStr = JSON.stringify(json.errors);
+      throw new Error('API-Football Error: ' + errStr);
+    }
 
-    processedRecords = syncMatchesToDatabase(persibMatches);
-    logMessage = 'Sinkronisasi berhasil: ' + processedRecords + ' jadwal pertandingan diperiksa dan diselaraskan.';
+    var fixtures = json.response || [];
+    if (fixtures.length === 0) {
+      logMessage = 'Koneksi API-Football berhasil, namun belum ada jadwal pertandingan yang ditemukan untuk musim ' + season + '.';
+    } else {
+      processedRecords = syncApiFootballFixtures(fixtures);
+      logMessage = 'Sinkronisasi API-Football berhasil! ' + processedRecords + ' pertandingan PERSIB diselaraskan tanpa duplikasi.';
+    }
   } catch (err) {
     status = 'ERROR';
     logMessage = 'Error sinkronisasi: ' + err.message;
-    Logger.log('Football API Error: ' + err.toString());
+    Logger.log('API-Football Error: ' + err.toString());
   }
 
   // Rekam riwayat ke sheet sync_logs
@@ -83,88 +107,229 @@ function runFootballApiSync(triggerSource) {
 }
 
 /**
- * Menyelaraskan daftar pertandingan API ke Sheet matches (Pencegahan Duplikasi)
+ * Menyelaraskan array fixtures dari API-Football ke Spreadsheet
  */
-function syncMatchesToDatabase(apiMatches) {
+function syncApiFootballFixtures(fixtures) {
   var ss = getSpreadsheet();
-  var sheet = ss.getSheetByName('matches');
-  if (!sheet) return 0;
+  var matchSheet = ss.getSheetByName('matches');
+  var teamSheet = ss.getSheetByName('teams');
+  var stdSheet = ss.getSheetByName('stadiums');
+  var compSheet = ss.getSheetByName('competitions');
 
-  var data = sheet.getDataRange().getValues();
-  var headers = data[0];
-  var extIdCol = headers.indexOf('external_match_id');
-  var statusCol = headers.indexOf('status');
-  var hScoreCol = headers.indexOf('home_score');
-  var aScoreCol = headers.indexOf('away_score');
-  var updatedCol = headers.indexOf('updated_at');
+  if (!matchSheet) return 0;
+
+  // Baca data yang sudah ada
+  var existingMatches = matchSheet.getDataRange().getValues();
+  var matchHeaders = existingMatches[0];
+  var extIdCol = matchHeaders.indexOf('external_match_id');
+  var statusCol = matchHeaders.indexOf('status');
+  var hScoreCol = matchHeaders.indexOf('home_score');
+  var aScoreCol = matchHeaders.indexOf('away_score');
+  var dateCol = matchHeaders.indexOf('match_date');
+  var timeCol = matchHeaders.indexOf('match_time');
+  var updatedCol = matchHeaders.indexOf('updated_at');
 
   var existingMap = {};
-  for (var i = 1; i < data.length; i++) {
-    var extId = String(data[i][extIdCol]).trim();
-    if (extId) {
-      existingMap[extId] = i + 1; // Nomor baris sheet (1-based)
-    }
+  for (var i = 1; i < existingMatches.length; i++) {
+    var extId = String(existingMatches[i][extIdCol]).trim();
+    if (extId) existingMap[extId] = i + 1; // 1-based row number
   }
 
-  var processed = 0;
+  // Cache teams & stadiums
+  var teamsMap = getEntitiesMap(teamSheet, 'name');
+  var stadiumsMap = getEntitiesMap(stdSheet, 'name');
+  var compMap = getEntitiesMap(compSheet, 'name');
+
+  var processedCount = 0;
   var nowStr = Utilities.formatDate(new Date(), 'Asia/Jakarta', "yyyy-MM-dd'T'HH:mm:ss");
 
-  for (var k = 0; k < apiMatches.length; k++) {
-    var m = apiMatches[k];
-    var externalId = 'EXT-' + m.id;
-    var status = mapApiStatus(m.status);
-    var hScore = (m.score && m.score.fullTime && m.score.fullTime.home !== null) ? m.score.fullTime.home : '';
-    var aScore = (m.score && m.score.fullTime && m.score.fullTime.away !== null) ? m.score.fullTime.away : '';
+  for (var k = 0; k < fixtures.length; k++) {
+    var f = fixtures[k];
+    var fixObj = f.fixture || {};
+    var leagueObj = f.league || {};
+    var teamsObj = f.teams || {};
+    var goalsObj = f.goals || {};
+
+    var externalId = 'EXT-APIFB-' + fixObj.id;
+    var status = mapApiFootballStatus(fixObj.status ? fixObj.status.short : 'NS');
+
+    // Tanggal & Waktu dalam WIB (Asia/Jakarta)
+    var matchDate = '';
+    var matchTime = '19:00';
+    if (fixObj.date) {
+      var d = new Date(fixObj.date);
+      matchDate = Utilities.formatDate(d, 'Asia/Jakarta', 'yyyy-MM-dd');
+      matchTime = Utilities.formatDate(d, 'Asia/Jakarta', 'HH:mm');
+    }
+
+    var hScore = goalsObj.home !== null && goalsObj.home !== undefined ? goalsObj.home : '';
+    var aScore = goalsObj.away !== null && goalsObj.away !== undefined ? goalsObj.away : '';
+
+    // Resolusi Tim PERSIB vs Lawan
+    var homeTeamData = teamsObj.home || {};
+    var awayTeamData = teamsObj.away || {};
+    var isPersibHome = (homeTeamData.id === 854) || (String(homeTeamData.name || '').toLowerCase().indexOf('persib') !== -1);
+
+    var homeTeamId = isPersibHome ? 'T-001' : resolveOrCreateTeam(teamSheet, teamsMap, homeTeamData);
+    var awayTeamId = !isPersibHome ? 'T-001' : resolveOrCreateTeam(teamSheet, teamsMap, awayTeamData);
+
+    // Resolusi Stadion & Kompetisi
+    var stadiumId = resolveOrCreateStadium(stdSheet, stadiumsMap, fixObj.venue);
+    var compId = resolveOrCreateCompetition(compSheet, compMap, leagueObj);
+    var seasonId = 'SEAS-' + (leagueObj.season || '2024') + '-' + (Number(leagueObj.season || 2024) + 1);
+
+    var referee = fixObj.referee || '-';
+    var notes = leagueObj.round ? ('Babak: ' + leagueObj.round) : 'Jadwal resmi via API-Football';
 
     if (existingMap[externalId]) {
-      // Pertandingan sudah ada: Update status dan skor saja (Jangan ubah ID atau buat duplikat)
+      // Pertandingan sudah ada: Update status, skor, waktu tanpa mengubah ID
       var rowNum = existingMap[externalId];
-      sheet.getRange(rowNum, statusCol + 1).setValue(status);
-      if (hScore !== '') sheet.getRange(rowNum, hScoreCol + 1).setValue(hScore);
-      if (aScore !== '') sheet.getRange(rowNum, aScoreCol + 1).setValue(aScore);
-      sheet.getRange(rowNum, updatedCol + 1).setValue(nowStr);
-      processed++;
+      if (statusCol !== -1) matchSheet.getRange(rowNum, statusCol + 1).setValue(status);
+      if (hScoreCol !== -1 && hScore !== '') matchSheet.getRange(rowNum, hScoreCol + 1).setValue(hScore);
+      if (aScoreCol !== -1 && aScore !== '') matchSheet.getRange(rowNum, aScoreCol + 1).setValue(aScore);
+      if (dateCol !== -1 && matchDate) matchSheet.getRange(rowNum, dateCol + 1).setValue(matchDate);
+      if (timeCol !== -1 && matchTime) matchSheet.getRange(rowNum, timeCol + 1).setValue(matchTime);
+      if (updatedCol !== -1) matchSheet.getRange(rowNum, updatedCol + 1).setValue(nowStr);
+      processedCount++;
     } else {
-      // Pertandingan baru: Masukkan baris baru
-      var matchDate = m.utcDate ? Utilities.formatDate(new Date(m.utcDate), 'Asia/Jakarta', 'yyyy-MM-dd') : '';
-      var matchTime = m.utcDate ? Utilities.formatDate(new Date(m.utcDate), 'Asia/Jakarta', 'HH:mm') : '19:00';
-      var newMatchId = 'MATCH-SYNC-' + m.id;
-
+      // Pertandingan baru: Append baris baru
+      var newMatchId = 'MATCH-AFB-' + fixObj.id;
       var newRow = [
         newMatchId,
         externalId,
-        'T-001', // Asumsi PERSIB home/away resolver
-        'T-002',
-        'COMP-01',
-        'SEAS-2024-2025',
-        'STD-01',
+        homeTeamId,
+        awayTeamId,
+        compId,
+        seasonId,
+        stadiumId,
         matchDate,
         matchTime,
         hScore,
         aScore,
         status,
-        'Football API',
+        'API-Football',
         nowStr,
         nowStr
       ];
-      sheet.appendRow(newRow);
-      processed++;
+      matchSheet.appendRow(newRow);
+      processedCount++;
     }
   }
 
-  return processed;
+  return processedCount;
 }
 
 /**
- * Mapping status Football API ke status resmi sistem
+ * Mapping status pertandingan dari API-Football (v3)
  */
-function mapApiStatus(apiStatus) {
-  var s = String(apiStatus).toUpperCase();
-  if (s === 'FINISHED' || s === 'FT' || s === 'AET' || s === 'PEN') return 'FINISHED';
-  if (s === 'IN_PLAY' || s === 'LIVE' || s === '1H' || s === '2H' || s === 'HT') return 'LIVE';
-  if (s === 'POSTPONED' || s === 'SUSPENDED') return 'POSTPONED';
-  if (s === 'CANCELLED') return 'CANCELLED';
-  return 'SCHEDULED';
+function mapApiFootballStatus(shortStatus) {
+  var s = String(shortStatus || '').toUpperCase();
+  switch (s) {
+    case 'FT':
+    case 'AET':
+    case 'PEN':
+      return 'FINISHED';
+    case '1H':
+    case 'HT':
+    case '2H':
+    case 'ET':
+    case 'P':
+    case 'LIVE':
+      return 'LIVE';
+    case 'PST':
+      return 'POSTPONED';
+    case 'CANC':
+    case 'ABD':
+      return 'CANCELLED';
+    case 'NS':
+    case 'TBD':
+    default:
+      return 'SCHEDULED';
+  }
+}
+
+/**
+ * Helper Map untuk Sheet
+ */
+function getEntitiesMap(sheet, keyColumn) {
+  var map = {};
+  if (!sheet) return map;
+  var data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return map;
+  var headers = data[0];
+  var keyIdx = headers.indexOf(keyColumn);
+  var idIdx = headers.indexOf('id');
+  for (var i = 1; i < data.length; i++) {
+    var k = String(data[i][keyIdx]).trim().toLowerCase();
+    map[k] = data[i][idIdx];
+  }
+  return map;
+}
+
+/**
+ * Resolusi atau tambah tim lawan secara otomatis
+ */
+function resolveOrCreateTeam(sheet, map, teamData) {
+  if (!teamData || !teamData.name) return 'T-002';
+  var nameKey = String(teamData.name).trim().toLowerCase();
+  if (map[nameKey]) return map[nameKey];
+
+  if (!sheet) return 'T-002';
+  var newId = 'T-' + String(sheet.getLastRow() + 1).padStart(3, '0');
+  var now = new Date().toISOString();
+  sheet.appendRow([
+    newId,
+    teamData.name,
+    teamData.logo || 'https://assets.ileague.id/uploads/images/club/lineup_PERSIB_BANDUNG_1786248601.png',
+    now,
+    now
+  ]);
+  map[nameKey] = newId;
+  return newId;
+}
+
+/**
+ * Resolusi atau tambah stadion
+ */
+function resolveOrCreateStadium(sheet, map, venueData) {
+  if (!venueData || !venueData.name) return 'STD-01';
+  var nameKey = String(venueData.name).trim().toLowerCase();
+  if (map[nameKey]) return map[nameKey];
+
+  if (!sheet) return 'STD-01';
+  var newId = 'STD-' + String(sheet.getLastRow() + 1).padStart(2, '0');
+  var now = new Date().toISOString();
+  sheet.appendRow([
+    newId,
+    venueData.name,
+    venueData.city || 'Bandung',
+    now,
+    now
+  ]);
+  map[nameKey] = newId;
+  return newId;
+}
+
+/**
+ * Resolusi atau tambah kompetisi
+ */
+function resolveOrCreateCompetition(sheet, map, leagueData) {
+  if (!leagueData || !leagueData.name) return 'COMP-01';
+  var nameKey = String(leagueData.name).trim().toLowerCase();
+  if (map[nameKey]) return map[nameKey];
+
+  if (!sheet) return 'COMP-01';
+  var newId = 'COMP-' + String(sheet.getLastRow() + 1).padStart(2, '0');
+  var now = new Date().toISOString();
+  sheet.appendRow([
+    newId,
+    leagueData.name,
+    leagueData.logo || '',
+    now,
+    now
+  ]);
+  map[nameKey] = newId;
+  return newId;
 }
 
 /**
@@ -196,7 +361,6 @@ function recordSyncLog(syncType, status, processedCount, message) {
  * Setup Trigger Otomatis Google Apps Script (Berjalan setiap 6 jam)
  */
 function setupSyncTrigger() {
-  // Hapus trigger lama jika ada untuk mencegah duplikasi trigger
   var triggers = ScriptApp.getProjectTriggers();
   for (var i = 0; i < triggers.length; i++) {
     if (triggers[i].getHandlerFunction() === 'runAutomaticSyncTrigger') {
@@ -204,26 +368,19 @@ function setupSyncTrigger() {
     }
   }
 
-  // Buat trigger time-driven baru setiap 6 jam
   ScriptApp.newTrigger('runAutomaticSyncTrigger')
     .timeBased()
     .everyHours(6)
     .create();
 
-  Logger.log('Time-Driven Trigger berhasil dipasang! Sinkronisasi akan berjalan otomatis setiap 6 jam.');
+  Logger.log('Time-Driven Trigger API-Football aktif! Sinkronisasi otomatis setiap 6 jam.');
   return { status: 'success', message: 'Trigger sinkronisasi otomatis setiap 6 jam berhasil diaktifkan.' };
 }
 
-/**
- * Handler yang dipanggil oleh trigger time-based
- */
 function runAutomaticSyncTrigger() {
   runFootballApiSync('AUTOMATIC_TRIGGER');
 }
 
-/**
- * Fallback Sinkronisasi Simulasi bila API Key belum diatur
- */
 function handleSimulatedVerifiedSync(syncType, customMsg) {
   recordSyncLog(syncType, 'SUCCESS', 1, customMsg);
   return {
@@ -235,14 +392,17 @@ function handleSimulatedVerifiedSync(syncType, customMsg) {
 
 /**
  * HELPER: Simpan FOOTBALL_API_KEY ke Script Properties
- * Anda bisa menjalankan fungsi ini sekali di Apps Script untuk menyimpan API Key.
+ * Jalankan fungsi ini di Apps Script setelah mengisi API Key Anda di bawah.
  */
 function setFootballApiKey(apiKey) {
-  var key = apiKey || "MASUKKAN_API_KEY_ANDA_DISINI";
-  if (key === "MASUKKAN_API_KEY_ANDA_DISINI") {
-    Logger.log("Peringatan: Ganti 'MASUKKAN_API_KEY_ANDA_DISINI' dengan token API Anda terlebih dahulu.");
+  var key = apiKey || "TEMPELKAN_API_KEY_ANDA_DISINI";
+  if (key === "TEMPELKAN_API_KEY_ANDA_DISINI") {
+    Logger.log("Peringatan: Ganti 'TEMPELKAN_API_KEY_ANDA_DISINI' dengan API Key api-football.com Anda terlebih dahulu.");
     return;
   }
   PropertiesService.getScriptProperties().setProperty('FOOTBALL_API_KEY', key.trim());
-  Logger.log("SUKSES: FOOTBALL_API_KEY berhasil disimpan di Script Properties!");
+  PropertiesService.getScriptProperties().setProperty('FOOTBALL_API_PROVIDER', 'api-football.com');
+  PropertiesService.getScriptProperties().setProperty('PERSIB_TEAM_ID', '854'); // 854 = Persib Bandung
+  PropertiesService.getScriptProperties().setProperty('FOOTBALL_SEASON', '2024');
+  Logger.log("SUKSES: Konfigurasi API-Football (api-football.com) berhasil disimpan!");
 }

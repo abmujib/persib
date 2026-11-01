@@ -30,13 +30,13 @@ const CONFIG = {
 
   // Football API Provider Configurations
   FOOTBALL_API: {
-    DEFAULT_PROVIDER: 'Football-Data.org',
+    DEFAULT_PROVIDER: 'api-football.com',
+    PERSIB_TEAM_ID: 854, // Official Team ID for Persib Bandung on api-football.com
+    DEFAULT_SEASON: 2024,
     PROVIDERS: [
-      { id: 'football-data', name: 'Football-Data.org', docUrl: 'https://www.football-data.org/' },
-      { id: 'api-football', name: 'API-Football (RapidAPI)', docUrl: 'https://www.api-football.com/' }
-    ],
-    PERSIB_TEAM_ID: 'PERSIB-BDG',
-    DEFAULT_LEAGUE: 'Liga 1 Indonesia'
+      { id: 'api-football', name: 'API-Football (api-football.com)', docUrl: 'https://www.api-football.com/' },
+      { id: 'rapidapi', name: 'API-Football via RapidAPI', docUrl: 'https://rapidapi.com/api-sports/api/api-football' }
+    ]
   },
 
   // Match Status Constants
