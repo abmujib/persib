@@ -94,95 +94,18 @@ const AdminApp = (function() {
     await loadAllAdminData();
   }
 
-  function setupSidebarToggle() {
-    const toggleBtn = document.getElementById('sidebarToggleBtn');
-    const layoutWrapper = document.querySelector('.admin-layout-wrapper');
-    if (toggleBtn && layoutWrapper) {
-      toggleBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        if (window.innerWidth < 992) {
-          layoutWrapper.classList.toggle('sidebar-open');
-        } else {
-          layoutWrapper.classList.toggle('sidebar-collapsed');
-        }
-      });
-    }
-  }
-
   function setupDashboardTabs() {
-    setupSidebarToggle();
-
     const navItems = document.querySelectorAll('.admin-nav-link');
-    const titleEl = document.getElementById('currentViewTitle');
-    const breadcrumbEl = document.getElementById('currentViewBreadcrumb');
-
-    const viewMetaData = {
-      overview: {
-        title: '<i class="bi bi-speedometer2 text-primary me-2"></i>Dashboard Overview',
-        breadcrumb: 'Overview'
-      },
-      matches: {
-        title: '<i class="bi bi-calendar-check-fill text-warning me-2"></i>Jadwal & Hasil Pertandingan PERSIB',
-        breadcrumb: 'Jadwal & Skor'
-      },
-      teams: {
-        title: '<i class="bi bi-shield-fill text-info me-2"></i>Daftar Tim Lawan & Logo',
-        breadcrumb: 'Tim Lawan'
-      },
-      stadiums: {
-        title: '<i class="bi bi-geo-alt-fill text-success me-2"></i>Manajemen Stadion & Lokasi',
-        breadcrumb: 'Stadion'
-      },
-      competitions: {
-        title: '<i class="bi bi-trophy-fill text-warning me-2"></i>Kompetisi Resmi & Turnamen',
-        breadcrumb: 'Kompetisi'
-      },
-      sync: {
-        title: '<i class="bi bi-arrow-repeat text-primary me-2"></i>Football API Sync Settings',
-        breadcrumb: 'API Sync'
-      },
-      logs: {
-        title: '<i class="bi bi-journal-code text-secondary me-2"></i>Riwayat Log Sinkronisasi API',
-        breadcrumb: 'Sync Logs'
-      },
-      database: {
-        title: '<i class="bi bi-database-gear text-danger me-2"></i>Database Tools & Backup',
-        breadcrumb: 'Database'
-      }
-    };
-
     navItems.forEach(item => {
       item.addEventListener('click', (e) => {
         e.preventDefault();
+        navItems.forEach(n => n.classList.remove('active'));
+        item.classList.add('active');
+
         const targetView = item.dataset.view;
-        if (!targetView) return;
-
-        // Highlight matching nav items across sidebar and header
-        navItems.forEach(n => {
-          if (n.dataset.view === targetView) {
-            n.classList.add('active');
-          } else {
-            n.classList.remove('active');
-          }
-        });
-
-        // Show target panel
         document.querySelectorAll('.admin-view-panel').forEach(p => p.classList.add('d-none'));
         const panel = document.getElementById(`panel_${targetView}`);
         if (panel) panel.classList.remove('d-none');
-
-        // Update header title & breadcrumb
-        const meta = viewMetaData[targetView];
-        if (meta) {
-          if (titleEl) titleEl.innerHTML = meta.title;
-          if (breadcrumbEl) breadcrumbEl.textContent = meta.breadcrumb;
-        }
-
-        // Close sidebar on mobile upon item selection
-        if (window.innerWidth < 992) {
-          const wrapper = document.querySelector('.admin-layout-wrapper');
-          if (wrapper) wrapper.classList.remove('sidebar-open');
-        }
       });
     });
   }
@@ -222,23 +145,11 @@ const AdminApp = (function() {
     const upcomingCount = matches.filter(m => m.status === 'SCHEDULED' || m.status === 'TIMED').length;
     const finishedCount = matches.filter(m => m.status === 'FINISHED').length;
 
-    const totalEl = document.getElementById('adminStatTotalMatches');
-    const upcomingEl = document.getElementById('adminStatUpcoming');
-    const finishedEl = document.getElementById('adminStatFinished');
-    const teamsEl = document.getElementById('adminStatTeams');
-    const syncsEl = document.getElementById('adminStatSyncs');
-
-    if (totalEl) totalEl.textContent = matches.length;
-    if (upcomingEl) upcomingEl.textContent = upcomingCount;
-    if (finishedEl) finishedEl.textContent = finishedCount;
-    if (teamsEl) teamsEl.textContent = teams.length;
-    if (syncsEl) syncsEl.textContent = syncLogs.length;
-
-    // Sidebar badge counts
-    const badgeMatches = document.getElementById('sidebarBadgeMatches');
-    const badgeTeams = document.getElementById('sidebarBadgeTeams');
-    if (badgeMatches) badgeMatches.textContent = matches.length;
-    if (badgeTeams) badgeTeams.textContent = teams.length;
+    document.getElementById('adminStatTotalMatches').textContent = matches.length;
+    document.getElementById('adminStatUpcoming').textContent = upcomingCount;
+    document.getElementById('adminStatFinished').textContent = finishedCount;
+    document.getElementById('adminStatTeams').textContent = teams.length;
+    document.getElementById('adminStatSyncs').textContent = syncLogs.length;
   }
 
   function renderMatchesTable() {
