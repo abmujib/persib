@@ -1,0 +1,650 @@
+{
+  "status": "success",
+  "meta": {
+    "api_version": "1.0.0",
+    "club": "PERSIB Bandung",
+    "timezone": "Asia/Jakarta (WIB)",
+    "generated_at": "2026-11-01T21:11:34.318Z",
+    "total_completed": 11
+  },
+  "data": [
+    {
+      "id": "MATCH-20261101-584",
+      "external_match_id": "MANUAL-1793549705126",
+      "match_date": "2026-11-01",
+      "match_time": "15:30",
+      "timezone": "Asia/Jakarta (WIB)",
+      "datetime_wib": "2026-11-01T15:30:00+07:00",
+      "formatted_date": "Minggu, 1 November 2026",
+      "match_type": "HOME",
+      "home_team": {
+        "id": "T-001",
+        "name": "PERSIB BANDUNG",
+        "logo": "https://assets.ileague.id/uploads/images/club/lineup_PERSIB_BANDUNG_1786248601.png",
+        "created_at": "2026-11-01T14:45:07.851Z",
+        "updated_at": "2026-11-02"
+      },
+      "away_team": {
+        "id": "T-008",
+        "name": "ISENMULANG KALTENG FC",
+        "logo": "https://assets.ileague.id/uploads/images/logo/95/v/150/2409755.png",
+        "created_at": "2026-11-01T14:45:07.851Z",
+        "updated_at": "2026-11-01T14:45:07.851Z"
+      },
+      "opponent": {
+        "id": "T-008",
+        "name": "ISENMULANG KALTENG FC",
+        "logo": "https://assets.ileague.id/uploads/images/logo/95/v/150/2409755.png",
+        "created_at": "2026-11-01T14:45:07.851Z",
+        "updated_at": "2026-11-01T14:45:07.851Z"
+      },
+      "score": {
+        "home": 4,
+        "away": 0,
+        "scoreline": "4 - 0",
+        "persib_score": 4,
+        "opponent_score": 0,
+        "result": "WIN",
+        "result_badge": "Menang",
+        "points_earned": 3,
+        "goal_difference": 4,
+        "clean_sheet": true
+      },
+      "competition": {
+        "id": "COMP-01",
+        "name": "BRI Super League",
+        "logo": "https://thumb.wikimedia.org/wikipedia/en/thumb/1/13/BRI_Super_League_2026.svg/500px-BRI_Super_League_2026.svg.png",
+        "created_at": "2026-11-01T14:45:09.333Z",
+        "updated_at": "2026-11-02"
+      },
+      "stadium": {
+        "id": "STD-02",
+        "name": "Stadion Si Jalak Harupat",
+        "city": "Kabupaten Bandung",
+        "created_at": "2026-11-01T14:45:11.500Z",
+        "updated_at": "2026-11-01T14:45:11.500Z"
+      },
+      "broadcast": "Indosiar & Vidio"
+    },
+    {
+      "id": "MATCH-20261102-352",
+      "external_match_id": "MANUAL-1793564380241",
+      "match_date": "2026-10-28",
+      "match_time": "19:15",
+      "timezone": "Asia/Jakarta (WIB)",
+      "datetime_wib": "2026-10-28T19:15:00+07:00",
+      "formatted_date": "Rabu, 28 Oktober 2026",
+      "match_type": "HOME",
+      "home_team": {
+        "id": "T-001",
+        "name": "PERSIB BANDUNG",
+        "logo": "https://assets.ileague.id/uploads/images/club/lineup_PERSIB_BANDUNG_1786248601.png",
+        "created_at": "2026-11-01T14:45:07.851Z",
+        "updated_at": "2026-11-02"
+      },
+      "away_team": {
+        "id": "T-019",
+        "name": "MELBOURNE VICTORY FC",
+        "logo": "https://upload.wikimedia.org/wikipedia/id/9/9f/1000016882.png",
+        "created_at": "2026-11-02",
+        "updated_at": "2026-11-02"
+      },
+      "opponent": {
+        "id": "T-019",
+        "name": "MELBOURNE VICTORY FC",
+        "logo": "https://upload.wikimedia.org/wikipedia/id/9/9f/1000016882.png",
+        "created_at": "2026-11-02",
+        "updated_at": "2026-11-02"
+      },
+      "score": {
+        "home": 2,
+        "away": 0,
+        "scoreline": "2 - 0",
+        "persib_score": 2,
+        "opponent_score": 0,
+        "result": "WIN",
+        "result_badge": "Menang",
+        "points_earned": 3,
+        "goal_difference": 2,
+        "clean_sheet": true
+      },
+      "competition": {
+        "id": "COMP-02",
+        "name": "AFC Champions League Two",
+        "logo": "https://thumb.wikimedia.org/wikipedia/en/thumb/8/81/AFC_Champions_League_Two.svg/330px-AFC_Champions_League_Two.svg.png",
+        "created_at": "2026-11-01T14:45:09.333Z",
+        "updated_at": "2026-11-02"
+      },
+      "stadium": {
+        "id": "STD-02",
+        "name": "Stadion Si Jalak Harupat",
+        "city": "Kabupaten Bandung",
+        "created_at": "2026-11-01T14:45:11.500Z",
+        "updated_at": "2026-11-01T14:45:11.500Z"
+      },
+      "broadcast": "Indosiar & Vidio"
+    },
+    {
+      "id": "MATCH-20261101-571",
+      "external_match_id": "MANUAL-1793549183184",
+      "match_date": "2026-10-25",
+      "match_time": "19:00",
+      "timezone": "Asia/Jakarta (WIB)",
+      "datetime_wib": "2026-10-25T19:00:00+07:00",
+      "formatted_date": "Minggu, 25 Oktober 2026",
+      "match_type": "AWAY",
+      "home_team": {
+        "id": "T-007",
+        "name": "GARUDAYAKSA FC",
+        "logo": "https://assets.ileague.id/uploads/images/logo/95/v/150/1814914856.png",
+        "created_at": "2026-11-01T14:45:07.851Z",
+        "updated_at": "2026-11-01T14:45:07.851Z"
+      },
+      "away_team": {
+        "id": "T-001",
+        "name": "PERSIB BANDUNG",
+        "logo": "https://assets.ileague.id/uploads/images/club/lineup_PERSIB_BANDUNG_1786248601.png",
+        "created_at": "2026-11-01T14:45:07.851Z",
+        "updated_at": "2026-11-02"
+      },
+      "opponent": {
+        "id": "T-007",
+        "name": "GARUDAYAKSA FC",
+        "logo": "https://assets.ileague.id/uploads/images/logo/95/v/150/1814914856.png",
+        "created_at": "2026-11-01T14:45:07.851Z",
+        "updated_at": "2026-11-01T14:45:07.851Z"
+      },
+      "score": {
+        "home": 1,
+        "away": 2,
+        "scoreline": "1 - 2",
+        "persib_score": 2,
+        "opponent_score": 1,
+        "result": "WIN",
+        "result_badge": "Menang",
+        "points_earned": 3,
+        "goal_difference": 1,
+        "clean_sheet": false
+      },
+      "competition": {
+        "id": "COMP-01",
+        "name": "BRI Super League",
+        "logo": "https://thumb.wikimedia.org/wikipedia/en/thumb/1/13/BRI_Super_League_2026.svg/500px-BRI_Super_League_2026.svg.png",
+        "created_at": "2026-11-01T14:45:09.333Z",
+        "updated_at": "2026-11-02"
+      },
+      "stadium": {
+        "id": "STD-08",
+        "name": "Stadion Pakansari",
+        "city": "Kab. Bogor",
+        "created_at": "2026-11-01T14:45:11.500Z",
+        "updated_at": "2026-11-01T14:45:11.500Z"
+      },
+      "broadcast": "Indosiar & Vidio"
+    },
+    {
+      "id": "MATCH-20261101-203",
+      "external_match_id": "MANUAL-1793548866520",
+      "match_date": "2026-10-22",
+      "match_time": "19:00",
+      "timezone": "Asia/Jakarta (WIB)",
+      "datetime_wib": "2026-10-22T19:00:00+07:00",
+      "formatted_date": "Kamis, 22 Oktober 2026",
+      "match_type": "AWAY",
+      "home_team": {
+        "id": "T-010",
+        "name": "MADURA UNITED FC",
+        "logo": "https://assets.ileague.id/uploads/images/club/lineup_MADURA_UNITED_FC_1786248119.png",
+        "created_at": "2026-11-01T14:45:07.851Z",
+        "updated_at": "2026-11-01T14:45:07.851Z"
+      },
+      "away_team": {
+        "id": "T-001",
+        "name": "PERSIB BANDUNG",
+        "logo": "https://assets.ileague.id/uploads/images/club/lineup_PERSIB_BANDUNG_1786248601.png",
+        "created_at": "2026-11-01T14:45:07.851Z",
+        "updated_at": "2026-11-02"
+      },
+      "opponent": {
+        "id": "T-010",
+        "name": "MADURA UNITED FC",
+        "logo": "https://assets.ileague.id/uploads/images/club/lineup_MADURA_UNITED_FC_1786248119.png",
+        "created_at": "2026-11-01T14:45:07.851Z",
+        "updated_at": "2026-11-01T14:45:07.851Z"
+      },
+      "score": {
+        "home": 1,
+        "away": 0,
+        "scoreline": "1 - 0",
+        "persib_score": 0,
+        "opponent_score": 1,
+        "result": "LOSS",
+        "result_badge": "Kalah",
+        "points_earned": 0,
+        "goal_difference": -1,
+        "clean_sheet": false
+      },
+      "competition": {
+        "id": "COMP-01",
+        "name": "BRI Super League",
+        "logo": "https://thumb.wikimedia.org/wikipedia/en/thumb/1/13/BRI_Super_League_2026.svg/500px-BRI_Super_League_2026.svg.png",
+        "created_at": "2026-11-01T14:45:09.333Z",
+        "updated_at": "2026-11-02"
+      },
+      "stadium": {
+        "id": "STD-07",
+        "name": "Stadion Gelora Madura Ratu Pamelingan",
+        "city": "Pamekasan",
+        "created_at": "2026-11-01T14:45:11.500Z",
+        "updated_at": "2026-11-01T14:45:11.500Z"
+      },
+      "broadcast": "Indosiar & Vidio"
+    },
+    {
+      "id": "MATCH-20261101-997",
+      "external_match_id": "MANUAL-1793548663785",
+      "match_date": "2026-10-18",
+      "match_time": "19:00",
+      "timezone": "Asia/Jakarta (WIB)",
+      "datetime_wib": "2026-10-18T19:00:00+07:00",
+      "formatted_date": "Minggu, 18 Oktober 2026",
+      "match_type": "HOME",
+      "home_team": {
+        "id": "T-001",
+        "name": "PERSIB BANDUNG",
+        "logo": "https://assets.ileague.id/uploads/images/club/lineup_PERSIB_BANDUNG_1786248601.png",
+        "created_at": "2026-11-01T14:45:07.851Z",
+        "updated_at": "2026-11-02"
+      },
+      "away_team": {
+        "id": "T-014",
+        "name": "PERSIK KEDIRI",
+        "logo": "https://assets.ileague.id/uploads/images/club/lineup_PERSIK_KEDIRI_1786248757.png",
+        "created_at": "2026-11-01T14:45:07.851Z",
+        "updated_at": "2026-11-01T14:45:07.851Z"
+      },
+      "opponent": {
+        "id": "T-014",
+        "name": "PERSIK KEDIRI",
+        "logo": "https://assets.ileague.id/uploads/images/club/lineup_PERSIK_KEDIRI_1786248757.png",
+        "created_at": "2026-11-01T14:45:07.851Z",
+        "updated_at": "2026-11-01T14:45:07.851Z"
+      },
+      "score": {
+        "home": 1,
+        "away": 0,
+        "scoreline": "1 - 0",
+        "persib_score": 1,
+        "opponent_score": 0,
+        "result": "WIN",
+        "result_badge": "Menang",
+        "points_earned": 3,
+        "goal_difference": 1,
+        "clean_sheet": true
+      },
+      "competition": {
+        "id": "COMP-01",
+        "name": "BRI Super League",
+        "logo": "https://thumb.wikimedia.org/wikipedia/en/thumb/1/13/BRI_Super_League_2026.svg/500px-BRI_Super_League_2026.svg.png",
+        "created_at": "2026-11-01T14:45:09.333Z",
+        "updated_at": "2026-11-02"
+      },
+      "stadium": {
+        "id": "STD-02",
+        "name": "Stadion Si Jalak Harupat",
+        "city": "Kabupaten Bandung",
+        "created_at": "2026-11-01T14:45:11.500Z",
+        "updated_at": "2026-11-01T14:45:11.500Z"
+      },
+      "broadcast": "Indosiar & Vidio"
+    },
+    {
+      "id": "MATCH-20261102-396",
+      "external_match_id": "MANUAL-1793564282285",
+      "match_date": "2026-10-14",
+      "match_time": "19:00",
+      "timezone": "Asia/Jakarta (WIB)",
+      "datetime_wib": "2026-10-14T19:00:00+07:00",
+      "formatted_date": "Rabu, 14 Oktober 2026",
+      "match_type": "HOME",
+      "home_team": {
+        "id": "T-001",
+        "name": "PERSIB BANDUNG",
+        "logo": "https://assets.ileague.id/uploads/images/club/lineup_PERSIB_BANDUNG_1786248601.png",
+        "created_at": "2026-11-01T14:45:07.851Z",
+        "updated_at": "2026-11-02"
+      },
+      "away_team": {
+        "id": "T-021",
+        "name": "VIETTEL FC",
+        "logo": "https://thumb.wikimedia.org/wikipedia/id/thumb/a/a1/Viettel_Football_Club_Logo.svg/500px-Viettel_Football_Club_Logo.svg.png",
+        "created_at": "2026-11-02",
+        "updated_at": "2026-11-02"
+      },
+      "opponent": {
+        "id": "T-021",
+        "name": "VIETTEL FC",
+        "logo": "https://thumb.wikimedia.org/wikipedia/id/thumb/a/a1/Viettel_Football_Club_Logo.svg/500px-Viettel_Football_Club_Logo.svg.png",
+        "created_at": "2026-11-02",
+        "updated_at": "2026-11-02"
+      },
+      "score": {
+        "home": 1,
+        "away": 0,
+        "scoreline": "1 - 0",
+        "persib_score": 1,
+        "opponent_score": 0,
+        "result": "WIN",
+        "result_badge": "Menang",
+        "points_earned": 3,
+        "goal_difference": 1,
+        "clean_sheet": true
+      },
+      "competition": {
+        "id": "COMP-02",
+        "name": "AFC Champions League Two",
+        "logo": "https://thumb.wikimedia.org/wikipedia/en/thumb/8/81/AFC_Champions_League_Two.svg/330px-AFC_Champions_League_Two.svg.png",
+        "created_at": "2026-11-01T14:45:09.333Z",
+        "updated_at": "2026-11-02"
+      },
+      "stadium": {
+        "id": "STD-01",
+        "name": "Stadion Gelora Bandung Lautan Api (GBLA)",
+        "city": "Bandung",
+        "created_at": "2026-11-01T14:45:11.500Z",
+        "updated_at": "2026-11-01T14:45:11.500Z"
+      },
+      "broadcast": "Indosiar & Vidio"
+    },
+    {
+      "id": "MATCH-20261101-84",
+      "external_match_id": "MANUAL-1793548575053",
+      "match_date": "2026-10-11",
+      "match_time": "19:00",
+      "timezone": "Asia/Jakarta (WIB)",
+      "datetime_wib": "2026-10-11T19:00:00+07:00",
+      "formatted_date": "Minggu, 11 Oktober 2026",
+      "match_type": "HOME",
+      "home_team": {
+        "id": "T-001",
+        "name": "PERSIB BANDUNG",
+        "logo": "https://assets.ileague.id/uploads/images/club/lineup_PERSIB_BANDUNG_1786248601.png",
+        "created_at": "2026-11-01T14:45:07.851Z",
+        "updated_at": "2026-11-02"
+      },
+      "away_team": {
+        "id": "T-006",
+        "name": "DEWA UNITED BANTEN FC",
+        "logo": "https://assets.ileague.id/uploads/images/club/lineup_DEWA_UNITED_BANTEN_FC_1786248040.png",
+        "created_at": "2026-11-01T14:45:07.851Z",
+        "updated_at": "2026-11-01T14:45:07.851Z"
+      },
+      "opponent": {
+        "id": "T-006",
+        "name": "DEWA UNITED BANTEN FC",
+        "logo": "https://assets.ileague.id/uploads/images/club/lineup_DEWA_UNITED_BANTEN_FC_1786248040.png",
+        "created_at": "2026-11-01T14:45:07.851Z",
+        "updated_at": "2026-11-01T14:45:07.851Z"
+      },
+      "score": {
+        "home": 2,
+        "away": 2,
+        "scoreline": "2 - 2",
+        "persib_score": 2,
+        "opponent_score": 2,
+        "result": "DRAW",
+        "result_badge": "Seri",
+        "points_earned": 1,
+        "goal_difference": 0,
+        "clean_sheet": false
+      },
+      "competition": {
+        "id": "COMP-01",
+        "name": "BRI Super League",
+        "logo": "https://thumb.wikimedia.org/wikipedia/en/thumb/1/13/BRI_Super_League_2026.svg/500px-BRI_Super_League_2026.svg.png",
+        "created_at": "2026-11-01T14:45:09.333Z",
+        "updated_at": "2026-11-02"
+      },
+      "stadium": {
+        "id": "STD-02",
+        "name": "Stadion Si Jalak Harupat",
+        "city": "Kabupaten Bandung",
+        "created_at": "2026-11-01T14:45:11.500Z",
+        "updated_at": "2026-11-01T14:45:11.500Z"
+      },
+      "broadcast": "Indosiar & Vidio"
+    },
+    {
+      "id": "MATCH-20261101-222",
+      "external_match_id": "MANUAL-1793548480982",
+      "match_date": "2026-09-20",
+      "match_time": "19:00",
+      "timezone": "Asia/Jakarta (WIB)",
+      "datetime_wib": "2026-09-20T19:00:00+07:00",
+      "formatted_date": "Minggu, 20 September 2026",
+      "match_type": "AWAY",
+      "home_team": {
+        "id": "T-013",
+        "name": "PERSIJAP JEPARA",
+        "logo": "https://assets.ileague.id/uploads/images/club/lineup_PERSIJAP_JEPARA_1786248733.png",
+        "created_at": "2026-11-01T14:45:07.851Z",
+        "updated_at": "2026-11-01T14:45:07.851Z"
+      },
+      "away_team": {
+        "id": "T-001",
+        "name": "PERSIB BANDUNG",
+        "logo": "https://assets.ileague.id/uploads/images/club/lineup_PERSIB_BANDUNG_1786248601.png",
+        "created_at": "2026-11-01T14:45:07.851Z",
+        "updated_at": "2026-11-02"
+      },
+      "opponent": {
+        "id": "T-013",
+        "name": "PERSIJAP JEPARA",
+        "logo": "https://assets.ileague.id/uploads/images/club/lineup_PERSIJAP_JEPARA_1786248733.png",
+        "created_at": "2026-11-01T14:45:07.851Z",
+        "updated_at": "2026-11-01T14:45:07.851Z"
+      },
+      "score": {
+        "home": 1,
+        "away": 2,
+        "scoreline": "1 - 2",
+        "persib_score": 2,
+        "opponent_score": 1,
+        "result": "WIN",
+        "result_badge": "Menang",
+        "points_earned": 3,
+        "goal_difference": 1,
+        "clean_sheet": false
+      },
+      "competition": {
+        "id": "COMP-01",
+        "name": "BRI Super League",
+        "logo": "https://thumb.wikimedia.org/wikipedia/en/thumb/1/13/BRI_Super_League_2026.svg/500px-BRI_Super_League_2026.svg.png",
+        "created_at": "2026-11-01T14:45:09.333Z",
+        "updated_at": "2026-11-02"
+      },
+      "stadium": {
+        "id": "STD-06",
+        "name": "Stadion Gelora Bumi Kartini",
+        "city": "Jepara",
+        "created_at": "2026-11-01T14:45:11.500Z",
+        "updated_at": "2026-11-01T14:45:11.500Z"
+      },
+      "broadcast": "Indosiar & Vidio"
+    },
+    {
+      "id": "MATCH-20261102-312",
+      "external_match_id": "MANUAL-1793563882177",
+      "match_date": "2026-09-16",
+      "match_time": "17:00",
+      "timezone": "Asia/Jakarta (WIB)",
+      "datetime_wib": "2026-09-16T17:00:00+07:00",
+      "formatted_date": "Rabu, 16 September 2026",
+      "match_type": "AWAY",
+      "home_team": {
+        "id": "T-020",
+        "name": "FC SEOUL",
+        "logo": "https://thumb.wikimedia.org/wikipedia/id/thumb/f/fa/Emblem_of_FC_Seoul.svg/500px-Emblem_of_FC_Seoul.svg.png",
+        "created_at": "2026-11-02",
+        "updated_at": "2026-11-02"
+      },
+      "away_team": {
+        "id": "T-001",
+        "name": "PERSIB BANDUNG",
+        "logo": "https://assets.ileague.id/uploads/images/club/lineup_PERSIB_BANDUNG_1786248601.png",
+        "created_at": "2026-11-01T14:45:07.851Z",
+        "updated_at": "2026-11-02"
+      },
+      "opponent": {
+        "id": "T-020",
+        "name": "FC SEOUL",
+        "logo": "https://thumb.wikimedia.org/wikipedia/id/thumb/f/fa/Emblem_of_FC_Seoul.svg/500px-Emblem_of_FC_Seoul.svg.png",
+        "created_at": "2026-11-02",
+        "updated_at": "2026-11-02"
+      },
+      "score": {
+        "home": 0,
+        "away": 1,
+        "scoreline": "0 - 1",
+        "persib_score": 1,
+        "opponent_score": 0,
+        "result": "WIN",
+        "result_badge": "Menang",
+        "points_earned": 3,
+        "goal_difference": 1,
+        "clean_sheet": true
+      },
+      "competition": {
+        "id": "COMP-02",
+        "name": "AFC Champions League Two",
+        "logo": "https://thumb.wikimedia.org/wikipedia/en/thumb/8/81/AFC_Champions_League_Two.svg/330px-AFC_Champions_League_Two.svg.png",
+        "created_at": "2026-11-01T14:45:09.333Z",
+        "updated_at": "2026-11-02"
+      },
+      "stadium": {
+        "id": "STD-20",
+        "name": "Stadion Piala Dunia Seoul",
+        "city": "Seoul",
+        "created_at": "2026-11-02",
+        "updated_at": "2026-11-02"
+      },
+      "broadcast": "Indosiar & Vidio"
+    },
+    {
+      "id": "MATCH-20261101-925",
+      "external_match_id": "MANUAL-1793547967212",
+      "match_date": "2026-09-12",
+      "match_time": "19:00",
+      "timezone": "Asia/Jakarta (WIB)",
+      "datetime_wib": "2026-09-12T19:00:00+07:00",
+      "formatted_date": "Sabtu, 12 September 2026",
+      "match_type": "AWAY",
+      "home_team": {
+        "id": "T-012",
+        "name": "PERSIJA JAKARTA",
+        "logo": "https://assets.ileague.id/uploads/images/club/lineup_PERSIJA_JAKARTA_1786248706.png",
+        "created_at": "2026-11-01T14:45:07.851Z",
+        "updated_at": "2026-11-01T14:45:07.851Z"
+      },
+      "away_team": {
+        "id": "T-001",
+        "name": "PERSIB BANDUNG",
+        "logo": "https://assets.ileague.id/uploads/images/club/lineup_PERSIB_BANDUNG_1786248601.png",
+        "created_at": "2026-11-01T14:45:07.851Z",
+        "updated_at": "2026-11-02"
+      },
+      "opponent": {
+        "id": "T-012",
+        "name": "PERSIJA JAKARTA",
+        "logo": "https://assets.ileague.id/uploads/images/club/lineup_PERSIJA_JAKARTA_1786248706.png",
+        "created_at": "2026-11-01T14:45:07.851Z",
+        "updated_at": "2026-11-01T14:45:07.851Z"
+      },
+      "score": {
+        "home": 2,
+        "away": 1,
+        "scoreline": "2 - 1",
+        "persib_score": 1,
+        "opponent_score": 2,
+        "result": "LOSS",
+        "result_badge": "Kalah",
+        "points_earned": 0,
+        "goal_difference": -1,
+        "clean_sheet": false
+      },
+      "competition": {
+        "id": "COMP-01",
+        "name": "BRI Super League",
+        "logo": "https://thumb.wikimedia.org/wikipedia/en/thumb/1/13/BRI_Super_League_2026.svg/500px-BRI_Super_League_2026.svg.png",
+        "created_at": "2026-11-01T14:45:09.333Z",
+        "updated_at": "2026-11-02"
+      },
+      "stadium": {
+        "id": "STD-03",
+        "name": "Stadion Utama Gelora Bung Karno (SUGBK)",
+        "city": "Jakarta",
+        "created_at": "2026-11-01T14:45:11.500Z",
+        "updated_at": "2026-11-01T14:45:11.500Z"
+      },
+      "broadcast": "Indosiar & Vidio"
+    },
+    {
+      "id": "MATCH-20261101-592",
+      "external_match_id": "MANUAL-1793547302553",
+      "match_date": "2026-09-06",
+      "match_time": "19:00",
+      "timezone": "Asia/Jakarta (WIB)",
+      "datetime_wib": "2026-09-06T19:00:00+07:00",
+      "formatted_date": "Minggu, 6 September 2026",
+      "match_type": "HOME",
+      "home_team": {
+        "id": "T-001",
+        "name": "PERSIB BANDUNG",
+        "logo": "https://assets.ileague.id/uploads/images/club/lineup_PERSIB_BANDUNG_1786248601.png",
+        "created_at": "2026-11-01T14:45:07.851Z",
+        "updated_at": "2026-11-02"
+      },
+      "away_team": {
+        "id": "T-017",
+        "name": "PSM MAKASSAR",
+        "logo": "https://assets.ileague.id/uploads/images/club/lineup_PSM_MAKASSAR_1786248830.png",
+        "created_at": "2026-11-01T14:45:07.851Z",
+        "updated_at": "2026-11-01T14:45:07.851Z"
+      },
+      "opponent": {
+        "id": "T-017",
+        "name": "PSM MAKASSAR",
+        "logo": "https://assets.ileague.id/uploads/images/club/lineup_PSM_MAKASSAR_1786248830.png",
+        "created_at": "2026-11-01T14:45:07.851Z",
+        "updated_at": "2026-11-01T14:45:07.851Z"
+      },
+      "score": {
+        "home": 3,
+        "away": 1,
+        "scoreline": "3 - 1",
+        "persib_score": 3,
+        "opponent_score": 1,
+        "result": "WIN",
+        "result_badge": "Menang",
+        "points_earned": 3,
+        "goal_difference": 2,
+        "clean_sheet": false
+      },
+      "competition": {
+        "id": "COMP-01",
+        "name": "BRI Super League",
+        "logo": "https://thumb.wikimedia.org/wikipedia/en/thumb/1/13/BRI_Super_League_2026.svg/500px-BRI_Super_League_2026.svg.png",
+        "created_at": "2026-11-01T14:45:09.333Z",
+        "updated_at": "2026-11-02"
+      },
+      "stadium": {
+        "id": "STD-01",
+        "name": "Stadion Gelora Bandung Lautan Api (GBLA)",
+        "city": "Bandung",
+        "created_at": "2026-11-01T14:45:11.500Z",
+        "updated_at": "2026-11-01T14:45:11.500Z"
+      },
+      "broadcast": "Indosiar & Vidio"
+    }
+  ]
+}
